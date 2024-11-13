@@ -1,8 +1,10 @@
 "use client";
+import { getCookie } from "@/lib/cookie-handler";
 import routes from "@/Routes/routes";
 import { BarChart3, Users, Package, Settings, Menu, X } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function AdminLayout({
   children,
@@ -12,6 +14,22 @@ export default function AdminLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+
+  // const isAdmin = await getCookie("isAdmin"); // Assumes "isAdmin" cookie holds "true" or "false"
+
+  // const filteredRoutes = routes.filter(
+  //   (route) => !route.adminOnly || isAdmin === "true"
+  // );
+
+  const router = useRouter();
+
+  useEffect(() => {
+    const isLoggedIn = getCookie("access_token");
+    if (!isLoggedIn) {
+      router.push("/login");
+    }
+  }, []);
+
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}

@@ -6,12 +6,13 @@ const routes = [
   },
   {
     id: 2,
-    href: "/",
+    href: "/register-agency",
     name: "Register Agency",
+    adminOnly: true, // Adding a flag to indicate admin-only access
   },
   {
     id: 3,
-    href: "/",
+    href: "/booking",
     name: "Booking",
   },
 ];
