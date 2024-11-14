@@ -23,27 +23,34 @@ import {
   SelectValue,
 } from "../ui/select";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { request } from "http";
+import requestHelper from "@/utils/request-helper";
+import toast from "react-hot-toast";
 
 const formSchema = z.object({
   flightDate: z.date(),
+  nationality: z.string({ message: "Nationality is required" }),
+  prePayment: z.coerce.number(),
+  discount: z.coerce.number(),
+  flightType: z.enum(["FREE", "TRAINING", "COMMERCIAL", "TEST"], {
+    errorMap: () => ({ message: "Please select a flight type." }),
+  }),
+  paymentMethod: z.enum(["CASH", "CARD", "CREDIT", "ONLINE"], {
+    errorMap: () => ({ message: "Please select a valid payment type." }),
+  }),
+  packageId: z.coerce.number(),
+  pilotId: z.coerce.number(),
+  includes: z.boolean(),
+  commission: z.coerce.number(),
   pName: z
     .string({ message: "Full Name is required" })
     .min(2, { message: " Name must be at least 2 characters" }),
-  pNationality: z.string({ message: "Nationality is required" }),
-  pPassport: z.string({ message: "Passport No is required" }),
-  flightDuraion: z.string(),
-  ticketNo: z.string(),
+  pId: z.string(),
+  ticketNo: z.string({ message: "Ticket number is required" }),
+  pIdType: z.string({ message: "Identification type is required" }),
+
   aircraftType: z.enum(["OPEN", "CLOSE"], {
     errorMap: () => ({ message: "Please select a aircraft type." }),
-  }),
-  photo: z.boolean(),
-  pilot: z.string(),
-  prePayment: z.string(),
-  paymentType: z.enum(["CASH", "CARD", "CREDIT", "ONLINE"], {
-    errorMap: () => ({ message: "Please select a valid payment type." }),
-  }),
-  flightType: z.enum(["FREE", "TRAINING", "COMMERCIAL", "TEST"], {
-    errorMap: () => ({ message: "Please select a flight type." }),
   }),
 });
 
@@ -55,6 +62,17 @@ export default function BookingForm() {
   const aircraftType = [
     { value: "OPEN", label: "Open" },
     { value: "CLOSE", label: "Close" },
+  ];
+
+  const flightPackages = [
+    { value: 2, label: "Package 1" },
+    { value: 3, label: "Package 2" },
+  ];
+
+  const pilots = [
+    { value: 2, label: "Pilot 1" },
+    { value: 3, label: "Pilot 2" },
+    { value: 4, label: "Pilot 2" },
   ];
 
   const paymentType = [
@@ -75,21 +93,38 @@ export default function BookingForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       flightDate: new Date(),
-      pName: "",
-      pNationality: "",
-      pPassport: "",
-      flightDuraion: "",
-      ticketNo: "",
-      aircraftType: undefined,
-      photo: undefined,
-      pilot: "",
-      prePayment: "",
-      paymentType: undefined,
+      nationality: "",
+      prePayment: undefined,
+      discount: undefined,
       flightType: undefined,
+      paymentMethod: undefined,
+      packageId: undefined,
+      pilotId: undefined,
+      includes: undefined,
+      commission: undefined,
+      pName: "",
+      pId: "",
+      ticketNo: "",
+      pIdType: "",
+
+      aircraftType: undefined,
     },
   });
 
-  const onSubmit = (data: BookingFormSchema) => {
+  const onSubmit = async (data: BookingFormSchema) => {
+    await requestHelper.post({
+      endPoint: "http://192.168.1.189:8080/booking",
+      data: data,
+      success: (message: string, data: any) => {
+        console.log("success", data);
+        toast.success(message);
+      },
+      failure: (error: any) => {
+        console.log("error", error);
+        toast.error(error.message);
+      },
+    });
+
     console.log("Booking form submitted:", data);
   };
 
@@ -102,19 +137,20 @@ export default function BookingForm() {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="my-8 p-6 border border-x-gray-600 rounded-lg w-[100%] "
+            className="my-8 p-8 border border-x-gray-600 rounded-lg w-[100%] "
           >
+            {/* name and nationality */}
             <div className="grid gap-4 pb-4 md:grid-cols-2">
               <FormField
                 control={form.control}
                 name="pName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[#4b5c5f] max-md:hidden">
+                    <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
                       Full Name <span className="text-red-600 text-lg">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="Passenger Name" {...field} />
+                      <Input placeholder="Passenger Full Name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -123,10 +159,10 @@ export default function BookingForm() {
 
               <FormField
                 control={form.control}
-                name="pNationality"
+                name="nationality"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[#4b5c5f] max-md:hidden">
+                    <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
                       Nationality{" "}
                       <span className="text-red-600 text-lg">*</span>
                     </FormLabel>
@@ -138,48 +174,57 @@ export default function BookingForm() {
                 )}
               />
             </div>
+
+            {/* identidication type and number */}
             <div className="grid gap-4 pb-4 md:grid-cols-2">
               <FormField
                 control={form.control}
-                name="flightDuraion"
+                name="pIdType"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[#4b5c5f] max-md:hidden">
-                      Flight Duration (Package){" "}
+                    <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
+                      Identification Type{" "}
                       <span className="text-red-600 text-lg">*</span>
                     </FormLabel>
-                    <Select onValueChange={field.onChange}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Please select flight type" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {flightType.map((flight) => (
-                          <div className="flex items-center" key={flight.value}>
-                            <SelectItem
-                              key={flight.value}
-                              value={flight.value}
-                              //   className="uppercase"
-                            >
-                              {flight.label}
-                            </SelectItem>
-                          </div>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage className="font-normal" />
+                    <FormControl>
+                      <Input placeholder="Citizenship / Passport" {...field} />
+                    </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
 
               <FormField
                 control={form.control}
+                name="pId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
+                      Identification Number
+                      <span className="text-red-600 text-lg">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Citizenship ID / Passport ID"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="font-normal" />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* flight date and aircraft type */}
+            <div className="grid gap-4 pb-4 md:grid-cols-2">
+              <FormField
+                control={form.control}
                 name="flightDate"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[#4b5c5f] max-md:hidden">
-                      Flight Date
+                    <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
+                      Flight Date{" "}
+                      <span className="text-red-600 text-lg">*</span>
                     </FormLabel>
                     <FormControl>
                       <DatePickerWithPresets
@@ -195,48 +240,13 @@ export default function BookingForm() {
                   </FormItem>
                 )}
               />
-            </div>
-            <div className="grid gap-4 pb-4 md:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="pPassport"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-[#4b5c5f] max-md:hidden">
-                      Passport Num{" "}
-                      <span className="text-red-600 text-lg">*</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Input placeholder="Passport Num" {...field} />
-                    </FormControl>
-                    <FormMessage className="font-normal" />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="grid gap-4 pb-4 md:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="pilot"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-[#4b5c5f] max-md:hidden">
-                      Pilot
-                    </FormLabel>
-                    <FormControl>
-                      <Input placeholder="Pilot" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
 
               <FormField
                 control={form.control}
                 name="aircraftType"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[#4b5c5f] max-md:hidden">
+                    <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
                       Aircraft Type{" "}
                       <span className="text-red-600 text-lg">*</span>
                     </FormLabel>
@@ -271,47 +281,62 @@ export default function BookingForm() {
             <div className="grid gap-4 pb-4 md:grid-cols-2">
               <FormField
                 control={form.control}
-                name="prePayment"
+                name="flightType"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[#4b5c5f] max-md:hidden">
-                      Pre Payment
+                    <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
+                      Flight Type
+                      <span className="text-red-600 text-lg">*</span>
                     </FormLabel>
-                    <FormControl>
-                      <Input placeholder="Pre Payment" {...field} />
-                    </FormControl>
-                    <FormMessage />
+                    <Select onValueChange={field.onChange}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Please select flight type" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {flightType.map((flight) => (
+                          <div className="flex items-center" key={flight.value}>
+                            <SelectItem
+                              key={flight.value}
+                              value={flight.value}
+                              //   className="uppercase"
+                            >
+                              {flight.label}
+                            </SelectItem>
+                          </div>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage className="font-normal" />
                   </FormItem>
                 )}
               />
 
               <FormField
                 control={form.control}
-                name="paymentType"
+                name="packageId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[#4b5c5f] max-md:hidden">
-                      Payment Type{" "}
+                    <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
+                      Flight Packages
                       <span className="text-red-600 text-lg">*</span>
                     </FormLabel>
                     <Select onValueChange={field.onChange}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Please select payment type" />
+                          <SelectValue placeholder="Please select flight package" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {paymentType.map((payment) => (
-                          <div
-                            className="flex items-center"
-                            key={payment.value}
-                          >
+                        {flightPackages.map((flight) => (
+                          <div className="flex items-center" key={flight.value}>
                             <SelectItem
-                              key={payment.value}
-                              value={payment.value}
+                              key={flight.value}
+                              value={flight.value.toFixed()}
                               //   className="uppercase"
                             >
-                              {payment.label}
+                              {flight.label}
                             </SelectItem>
                           </div>
                         ))}
@@ -325,11 +350,12 @@ export default function BookingForm() {
             <div className="grid gap-4 pb-4 md:grid-cols-2">
               <FormField
                 control={form.control}
-                name="photo"
+                name="includes"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[#4b5c5f] max-md:hidden">
-                      Photo <span className="text-red-600 text-lg">*</span>
+                    <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
+                      Want Photos / Videos?{" "}
+                      <span className="text-red-600 text-lg">*</span>
                     </FormLabel>
                     <FormControl>
                       <RadioGroup
@@ -356,14 +382,142 @@ export default function BookingForm() {
                   </FormItem>
                 )}
               />
+            </div>
+
+            {/* only for admin */}
+            {/* prepayment and payment type */}
+            <div className="grid gap-4 pb-4 md:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="prePayment"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
+                      Pre Payment{" "}
+                      <span className="text-red-600 text-lg">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="Pre Payment" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="paymentMethod"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
+                      Payment Method{" "}
+                      <span className="text-red-600 text-lg">*</span>
+                    </FormLabel>
+                    <Select onValueChange={field.onChange}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Please select payment method" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {paymentType.map((payment) => (
+                          <div
+                            className="flex items-center"
+                            key={payment.value}
+                          >
+                            <SelectItem
+                              key={payment.value}
+                              value={payment.value}
+                              //   className="uppercase"
+                            >
+                              {payment.label}
+                            </SelectItem>
+                          </div>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage className="font-normal" />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* discount and commision */}
+            <div className="grid gap-4 pb-4 md:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="discount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
+                      Discount
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="Discount" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="commission"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
+                      Commission (%)
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="Commission" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* pilot and ticket no */}
+            <div className="grid gap-4 pb-4 md:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="pilotId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
+                      Pilot <span className="text-red-600 text-lg">*</span>
+                    </FormLabel>
+                    <Select onValueChange={field.onChange}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Please select pilot" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {pilots.map((pilot) => (
+                          <div className="flex items-center" key={pilot.value}>
+                            <SelectItem
+                              key={pilot.value}
+                              value={pilot.value.toFixed()}
+                              //   className="uppercase"
+                            >
+                              {pilot.label}
+                            </SelectItem>
+                          </div>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage className="font-normal" />
+                  </FormItem>
+                )}
+              />
 
               <FormField
                 control={form.control}
                 name="ticketNo"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[#4b5c5f] max-md:hidden">
-                      Tciket No <span className="text-red-600 text-lg">*</span>
+                    <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
+                      Ticket No <span className="text-red-600 text-lg">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input placeholder="Ticket No" {...field} />
@@ -373,8 +527,8 @@ export default function BookingForm() {
                 )}
               />
             </div>
-            <div className="flex justify-center md:justify-end">
-              <Button className="bg-blue-500 px-8 py-1 transition-all duration-300 hover:scale-105 hover:bg-blue-600">
+            <div className="flex justify-center mx-auto items-center  my-4">
+              <Button className="bg-blue-500 lg:text-base px-14 py-2 transition-all duration-300 hover:scale-105 hover:bg-blue-600">
                 {" "}
                 Submit &nbsp; {isSubmitting && <Loading />}
               </Button>
