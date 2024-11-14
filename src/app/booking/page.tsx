@@ -2,6 +2,7 @@ import BookingForm from "@/components/booking-form/booking-form";
 import { getCookie, getCookies } from "@/lib/cookie-handler";
 import requestHelper from "@/utils/request-helper";
 import React, { useEffect, useState } from "react";
+import { FlightBookingsTableComponent } from "@/components/flight-bookings-table";
 
 export default async function Booking() {
   let token = await getCookie("access_token");
@@ -62,6 +63,8 @@ export default async function Booking() {
         pilots={pilots}
         flightPackages={packages}
       />
+
+      <FlightBookingsTableComponent />
     </div>
   );
 }
