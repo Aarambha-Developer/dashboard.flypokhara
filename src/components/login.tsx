@@ -16,13 +16,14 @@ import { AlertCircle, Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 import requestHelper from '@/utils/request-helper';
 import toast from 'react-hot-toast';
+import { setCookie } from '@/lib/cookie-handler';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
-const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const validateEmail = (email: string) => {
     const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return re.test(email);
@@ -52,11 +53,14 @@ const [loading, setLoading] = useState(false);
         email: email,
         password: password,
       },
-      success: (message: string, data: any) => {
-        setEmail('');
-        setPassword('');
+      success: async (message: string, data: any) => {
+        await setCookie('access_token', await data?.data?.access_token);
+        await setCookie('role', data?.data?.user?.role);
         toast.success(message);
         setLoading(false);
+        setEmail('');
+        setPassword('');
+        return;
       },
       failure: (error: any) => {
         toast.error(error.message);

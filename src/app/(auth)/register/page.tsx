@@ -1,10 +1,11 @@
-import React from "react";
-import RegisterComponent from "@/components/register";
+import { RegisterForm } from '@/components/registration-form';
+import { getCookie } from '@/lib/cookie-handler';
 
-export default function Register() {
+export default async function BlockPage() {
+  const role = await getCookie('role');
   return (
-    <div>
-      <RegisterComponent />
+    <div className=''>
+      <RegisterForm  role={role}/>
     </div>
   );
 }
