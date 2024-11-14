@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { useState } from "react";
+import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -10,7 +10,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table";
 
 type FlightBooking = {
   id: number;
@@ -33,14 +33,14 @@ const flightBookings: FlightBooking[] = [
     id: 2,
     userId: 5,
     pilotId: 3,
-    flightDate: '2023-01-01',
+    flightDate: "2023-01-01",
     packageId: 3,
-    nationality: 'nepali',
+    nationality: "nepali",
     totalPrice: 20000,
     discount: 100,
     prePayment: 200,
-    flightType: 'COMMERICAL',
-    paymentMethod: 'CASH',
+    flightType: "COMMERICAL",
+    paymentMethod: "CASH",
     includes: true,
     commission: 2000,
   },
@@ -48,14 +48,14 @@ const flightBookings: FlightBooking[] = [
     id: 3,
     userId: 5,
     pilotId: 3,
-    flightDate: '2023-01-01',
+    flightDate: "2023-01-01",
     packageId: 3,
-    nationality: 'nepali',
+    nationality: "nepali",
     totalPrice: 20000,
     discount: 100,
     prePayment: 200,
-    flightType: 'COMMERICAL',
-    paymentMethod: 'CASH',
+    flightType: "COMMERICAL",
+    paymentMethod: "CASH",
     includes: true,
     commission: 2000,
   },
@@ -63,14 +63,14 @@ const flightBookings: FlightBooking[] = [
     id: 4,
     userId: 5,
     pilotId: 3,
-    flightDate: '2023-01-01',
+    flightDate: "2023-01-01",
     packageId: 3,
-    nationality: 'nepali',
+    nationality: "nepali",
     totalPrice: 20000,
     discount: 100,
     prePayment: 200,
-    flightType: 'COMMERICAL',
-    paymentMethod: 'CASH',
+    flightType: "COMMERICAL",
+    paymentMethod: "CASH",
     includes: true,
     commission: 2000,
   },
@@ -78,14 +78,14 @@ const flightBookings: FlightBooking[] = [
     id: 5,
     userId: 5,
     pilotId: 3,
-    flightDate: '2023-01-01',
+    flightDate: "2023-01-01",
     packageId: 3,
-    nationality: 'nepali',
+    nationality: "nepali",
     totalPrice: 20000,
     discount: 100,
     prePayment: 200,
-    flightType: 'COMMERICAL',
-    paymentMethod: 'CASH',
+    flightType: "COMMERICAL",
+    paymentMethod: "CASH",
     includes: true,
     commission: 2000,
   },
@@ -93,14 +93,14 @@ const flightBookings: FlightBooking[] = [
     id: 15,
     userId: 5,
     pilotId: 3,
-    flightDate: '2023-01-01',
+    flightDate: "2023-01-01",
     packageId: 3,
-    nationality: 'nepali',
+    nationality: "nepali",
     totalPrice: 20000,
     discount: 100,
     prePayment: 200,
-    flightType: 'COMMERICAL',
-    paymentMethod: 'CASH',
+    flightType: "COMMERICAL",
+    paymentMethod: "CASH",
     includes: true,
     commission: 2000,
   },
@@ -108,14 +108,14 @@ const flightBookings: FlightBooking[] = [
     id: 15,
     userId: 5,
     pilotId: 3,
-    flightDate: '2023-01-01',
+    flightDate: "2023-01-01",
     packageId: 3,
-    nationality: 'nepali',
+    nationality: "nepali",
     totalPrice: 20000,
     discount: 100,
     prePayment: 200,
-    flightType: 'COMMERICAL',
-    paymentMethod: 'CASH',
+    flightType: "COMMERICAL",
+    paymentMethod: "CASH",
     includes: true,
     commission: 2000,
   },
@@ -132,7 +132,7 @@ export function FlightBookingsTableComponent() {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className='w-[50px]'></TableHead>
+          <TableHead className="w-[50px]"></TableHead>
           <TableHead>ID</TableHead>
           <TableHead>Flight Date</TableHead>
           <TableHead>Nationality</TableHead>
@@ -141,18 +141,19 @@ export function FlightBookingsTableComponent() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {flightBookings.map((booking) => (
+        {flightBookings.map((booking, index) => (
           <>
-            <TableRow key={booking.id}>
+            <TableRow key={index}>
               <TableCell>
                 <Button
-                  variant='ghost'
-                  size='sm'
-                  onClick={() => toggleRowExpansion(booking.id)}>
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => toggleRowExpansion(booking.id)}
+                >
                   {expandedRows[booking.id] ? (
-                    <ChevronUpIcon className='h-4 w-4' />
+                    <ChevronUpIcon className="h-4 w-4" />
                   ) : (
-                    <ChevronDownIcon className='h-4 w-4' />
+                    <ChevronDownIcon className="h-4 w-4" />
                   )}
                 </Button>
               </TableCell>
@@ -165,24 +166,24 @@ export function FlightBookingsTableComponent() {
             {expandedRows[booking.id] && (
               <TableRow>
                 <TableCell colSpan={6}>
-                  <div className='p-4 bg-muted rounded-md'>
-                    <h3 className='font-semibold mb-2'>Additional Details</h3>
-                    <dl className='grid grid-cols-2 gap-x-4 gap-y-2'>
-                      <dt className='font-medium'>User ID:</dt>
+                  <div className="p-4 bg-muted rounded-md">
+                    <h3 className="font-semibold mb-2">Additional Details</h3>
+                    <dl className="grid grid-cols-2 gap-x-4 gap-y-2">
+                      <dt className="font-medium">User ID:</dt>
                       <dd>{booking.userId}</dd>
-                      <dt className='font-medium'>Pilot ID:</dt>
+                      <dt className="font-medium">Pilot ID:</dt>
                       <dd>{booking.pilotId}</dd>
-                      <dt className='font-medium'>Package ID:</dt>
+                      <dt className="font-medium">Package ID:</dt>
                       <dd>{booking.packageId}</dd>
-                      <dt className='font-medium'>Discount:</dt>
+                      <dt className="font-medium">Discount:</dt>
                       <dd>{booking.discount}</dd>
-                      <dt className='font-medium'>Pre-payment:</dt>
+                      <dt className="font-medium">Pre-payment:</dt>
                       <dd>{booking.prePayment}</dd>
-                      <dt className='font-medium'>Payment Method:</dt>
+                      <dt className="font-medium">Payment Method:</dt>
                       <dd>{booking.paymentMethod}</dd>
-                      <dt className='font-medium'>Includes:</dt>
-                      <dd>{booking.includes ? 'Yes' : 'No'}</dd>
-                      <dt className='font-medium'>Commission:</dt>
+                      <dt className="font-medium">Includes:</dt>
+                      <dd>{booking.includes ? "Yes" : "No"}</dd>
+                      <dt className="font-medium">Commission:</dt>
                       <dd>{booking.commission}</dd>
                     </dl>
                   </div>
