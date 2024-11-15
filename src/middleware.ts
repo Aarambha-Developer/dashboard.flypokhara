@@ -3,10 +3,10 @@ import type { NextRequest } from "next/server";
 import { getCookie } from "./lib/cookie-handler";
 
 export function middleware(request: NextRequest) {
-  const isAdmin = request.cookies.get("isAdmin")?.value === "true";
+  const role = request.cookies.get("role")?.value === "ADMIN";
 
   // Check if the request is for an admin-only route
-  if (request.nextUrl.pathname === "/register-agency" && !isAdmin) {
+  if (request.nextUrl.pathname === "/register-agency" && !role) {
     // Redirect unauthorized users to a "not authorized" page or home page
     return NextResponse.redirect(new URL("/", request.url));
   }
