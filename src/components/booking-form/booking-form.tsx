@@ -109,6 +109,7 @@ export default function BookingForm({
     },
   });
 
+  console.log(flightPackages, 'flight packages ...........');
   const onSubmit = async (data: BookingFormSchema) => {
     const access_token = await getCookie('access_token');
     console.log(data);
@@ -124,17 +125,14 @@ export default function BookingForm({
       success: (message: string, data: any) => {
         // console.log("success", data);
         toast.success(message);
+        form.reset();
       },
       failure: (error: any) => {
         console.log('error', error);
         toast.error(error.message);
       },
     });
-
-    // console.log("Booking form submitted:", data);
   };
-
-  console.log(form.getValues());
 
   return (
     <>
@@ -297,20 +295,25 @@ export default function BookingForm({
                     <Select onValueChange={field.onChange}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder='Please select flight package' />
+                          <SelectValue placeholder='Please select flight package'>
+                            {field.value
+                              ? flightPackages.find(
+                                  (flight: any) => flight.id == field.value
+                                )?.title
+                              : 'Please select flight package'}
+                          </SelectValue>
                         </SelectTrigger>
                       </FormControl>
+
                       <SelectContent>
                         {flightPackages.map((flight: any) => (
-                          <div className='flex items-center' key={flight.id}>
-                            <SelectItem
-                              key={flight.id}
-                              value={flight.id}
-                              //   className="uppercase"
-                            >
-                              {flight.title}
-                            </SelectItem>
-                          </div>
+                          <SelectItem
+                            key={flight.id}
+                            value={flight.id}
+                            //   className="uppercase"
+                          >
+                            {flight.title}
+                          </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -425,7 +428,13 @@ export default function BookingForm({
                         <Select onValueChange={field.onChange}>
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder='Please select pilot' />
+                              <SelectValue placeholder='Please select pilot'>
+                                {field.value
+                                  ? pilots.find(
+                                      (pilot: any) => pilot.id == field.value
+                                    )?.name
+                                  : 'Please select pilot'}
+                              </SelectValue>
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
