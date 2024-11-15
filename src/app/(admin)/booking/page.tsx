@@ -11,7 +11,7 @@ import { Card } from '@/components/ui/card';
 export default async function Booking() {
   const bookings: FlightBooking[] = [];
   await requestHelper.get({
-    endPoint: 'http://192.168.1.189:8080/booking',
+    endPoint: `${process.env.NEXT_PUBLIC_API_URL}/booking`,
     token: await getCookie('access_token'),
     success: (message: string, data: any) => {
       bookings.push(...data.data);

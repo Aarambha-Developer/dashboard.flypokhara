@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -67,8 +67,8 @@ export function FlightBookingsTableComponent({
         </TableHeader>
         <TableBody>
           {flightBookings.map((booking, index) => (
-            <>
-              <TableRow key={index}>
+            <Fragment key={booking.id}>
+              <TableRow key={`${index}-row`}>
                 <TableCell>
                   <Button
                     variant='ghost'
@@ -88,7 +88,7 @@ export function FlightBookingsTableComponent({
                 <TableCell>{booking.flightType}</TableCell>
               </TableRow>
               {expandedRows[booking.id] && (
-                <TableRow>
+                <TableRow key={`${index}-details`}>
                   <TableCell colSpan={6}>
                     <div className='p-4 bg-muted rounded-md'>
                       <h3 className='font-semibold mb-2'>Additional Details</h3>
@@ -114,7 +114,7 @@ export function FlightBookingsTableComponent({
                   </TableCell>
                 </TableRow>
               )}
-            </>
+            </Fragment>
           ))}
         </TableBody>
       </Table>

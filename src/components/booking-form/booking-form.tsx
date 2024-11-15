@@ -1,7 +1,7 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useState } from 'react';
-import { date, z } from 'zod';
+import { z } from 'zod';
 import {
   Form,
   FormControl,
@@ -23,7 +23,6 @@ import {
   SelectValue,
 } from '../ui/select';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
-import { get, request } from 'http';
 import requestHelper from '@/utils/request-helper';
 import toast from 'react-hot-toast';
 import { getCookie } from '@/lib/cookie-handler';
@@ -33,21 +32,23 @@ const formSchema = z.object({
   nationality: z.string({ message: 'Nationality is required' }),
   prePayment: z.coerce.number(),
   discount: z.coerce.number(),
-  flightType: z.enum(['FREE', 'TRAINING', 'COMMERCIAL', 'TEST'], {
-    errorMap: () => ({ message: 'Please select a flight type.' }),
-  }),
-  paymentMethod: z.enum(['CASH', 'CARD', 'CREDIT', 'ONLINE'], {
-    errorMap: () => ({ message: 'Please select a valid payment type.' }),
-  }),
+  flightType: z
+    .enum(['FREE', 'TRAINING', 'COMMERCIAL', 'TEST'], {
+      errorMap: () => ({ message: 'Please select a flight type.' }),
+    })
+    .nullable(),
+  paymentMethod: z.any(),
+
   packageId: z.coerce.number(),
-  pilotId: z.coerce.number(),
+  pilotId: z.any(),
   includes: z.boolean(),
   commission: z.coerce.number(),
   pName: z
     .string({ message: 'Full Name is required' })
     .min(2, { message: ' Name must be at least 2 characters' }),
   pId: z.string(),
-  ticketNo: z.string({ message: 'Ticket number is required' }),
+  // ticketNo: z.string({ message: 'Ticket number is required' })(),
+  ticketNo: z.any(),
   pIdType: z.string({ message: 'Identification type is required' }),
 
   aircraftType: z.enum(['OPEN', 'CLOSE'], {
@@ -67,24 +68,11 @@ export default function BookingForm({
   flightPackages: any;
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  console.log('pilots', pilots);
-  console.log('flightPackages', flightPackages);
 
   const aircraftType = [
     { value: 'OPEN', label: 'Open' },
     { value: 'CLOSE', label: 'Close' },
   ];
-
-  // const flightPackages = [
-  //   { value: 2, label: "Package 1" },
-  //   { value: 3, label: "Package 2" },
-  // ];
-
-  // const pilots = [
-  //   { value: 2, label: "Pilot 1" },
-  //   { value: 3, label: "Pilot 2" },
-  //   { value: 4, label: "Pilot 2" },
-  // ];
 
   const paymentType = [
     { value: 'CASH', label: 'Cash' },
@@ -105,29 +93,33 @@ export default function BookingForm({
     defaultValues: {
       flightDate: new Date(),
       nationality: '',
-      prePayment: undefined,
-      discount: undefined,
-      flightType: undefined,
+      prePayment: 0,
+      discount: 0,
+      flightType: 'COMMERCIAL',
       paymentMethod: undefined,
       packageId: undefined,
       pilotId: undefined,
-      includes: undefined,
-      commission: undefined,
+      includes: false,
+      commission: 0,
       pName: '',
       pId: '',
       ticketNo: '',
       pIdType: '',
-
       aircraftType: undefined,
     },
   });
 
   const onSubmit = async (data: BookingFormSchema) => {
     const access_token = await getCookie('access_token');
-
+    console.log(data);
     await requestHelper.post({
-      endPoint: 'http://192.168.1.189:8080/booking',
-      data: data,
+      endPoint: `${process.env.NEXT_PUBLIC_API_URL}/booking`,
+      data: {
+        ...data,
+        pilotId: form.getValues('pilotId')
+          ? Number(form.getValues('pilotId'))
+          : undefined,
+      },
       token: access_token,
       success: (message: string, data: any) => {
         // console.log("success", data);
@@ -142,7 +134,7 @@ export default function BookingForm({
     // console.log("Booking form submitted:", data);
   };
 
-  // console.log("role", role);
+  console.log(form.getValues());
 
   return (
     <>
