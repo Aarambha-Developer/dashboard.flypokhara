@@ -42,7 +42,7 @@ const formSchema = z.object({
   packageId: z.coerce.number(),
   pilotId: z.any(),
   includes: z.boolean(),
-  commission: z.coerce.number(),
+  // commission: z.coerce.number().nullable(),
   pName: z
     .string({ message: 'Full Name is required' })
     .min(2, { message: ' Name must be at least 2 characters' }),
@@ -100,7 +100,6 @@ export default function BookingForm({
       packageId: undefined,
       pilotId: undefined,
       includes: false,
-      commission: 0,
       pName: '',
       pId: '',
       ticketNo: '',
@@ -110,15 +109,28 @@ export default function BookingForm({
   });
 
   const onSubmit = async (data: BookingFormSchema) => {
+    console.log(data);
     const access_token = await getCookie('access_token');
     await requestHelper.post({
       endPoint: `${process.env.NEXT_PUBLIC_API_URL}/booking`,
-      data: {
-        ...data,
-        pilotId: form.getValues('pilotId')
-          ? Number(form.getValues('pilotId'))
-          : undefined,
-      },
+      data:
+        role == 'ADMIN'
+          ? {
+              ...data,
+              pilotId: form.getValues('pilotId')
+                ? Number(form.getValues('pilotId'))
+                : undefined,
+            }
+          : {
+              pName: form.getValues('pName'),
+              nationality: form.getValues('nationality'),
+              pId: form.getValues('pId'),
+              pIdType: form.getValues('pIdType'),
+              flightDate: form.getValues('flightDate'),
+              packageId: Number(form.getValues('packageId')),
+              includes: form.getValues('includes'),
+              aircraftType: form.getValues('aircraftType'),
+            },
       token: access_token,
       success: (message: string, data: any) => {
         toast.success(message);
