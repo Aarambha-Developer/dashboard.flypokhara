@@ -37,23 +37,6 @@ const BookingFormPage = async () => {
     },
   });
 
-  // useEffect(() => {
-  //   fetchPilots();
-  // }, [token]);onst role = await getCookie("role");
-  //   setRole(role || "");
-  // };
-
-  // // function to fetch pilots
-  // await requestHelper.get({
-  //   endPoint: "http:/192.168.1.189:8080/pilots",
-  //   token : token,
-  // });
-
-  // // function to fetch packages
-
-  // useEffect(() => {
-  //   fetchRole();
-  // }, []);
   return (
     <BookingForm role={role || ''} pilots={pilots} flightPackages={packages} />
   );

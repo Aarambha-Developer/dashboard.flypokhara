@@ -49,7 +49,7 @@ export default function Login() {
     //
 
     requestHelper.post({
-      endPoint: 'http://192.168.1.189:8080/auth/login',
+      endPoint: `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
       data: {
         email: email,
         password: password,

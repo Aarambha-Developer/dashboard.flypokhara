@@ -60,7 +60,7 @@ export function RegisterForm({ role }: { role: string | undefined }) {
     const result = UserSchema.safeParse(formData);
     if (result.success) {
       await requestHelper.post({
-        endPoint: 'http://localhost:8080/auth/register',
+        endPoint: `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
         data: {
           name: formData.name,
           email: formData.email,
