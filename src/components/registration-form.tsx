@@ -70,7 +70,6 @@ export function RegisterForm({ role }: { role: string | undefined }) {
           role: formData.role,
         },
         success: async (message: string, data: any) => {
-          console.log(data, 'Registered in data');
           toast.success(message);
           setLoading(false);
           router.push('/login');

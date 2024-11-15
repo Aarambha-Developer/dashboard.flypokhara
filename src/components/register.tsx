@@ -34,7 +34,6 @@ export default function Register() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Here you would typically send the data to your backend
-    console.log("Registration submitted:", { email, password });
     // Reset form after submission
     setEmail("");
     setPassword("");

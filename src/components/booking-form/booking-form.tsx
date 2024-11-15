@@ -109,10 +109,8 @@ export default function BookingForm({
     },
   });
 
-  console.log(flightPackages, 'flight packages ...........');
   const onSubmit = async (data: BookingFormSchema) => {
     const access_token = await getCookie('access_token');
-    console.log(data);
     await requestHelper.post({
       endPoint: `${process.env.NEXT_PUBLIC_API_URL}/booking`,
       data: {
@@ -123,12 +121,10 @@ export default function BookingForm({
       },
       token: access_token,
       success: (message: string, data: any) => {
-        // console.log("success", data);
         toast.success(message);
         form.reset();
       },
       failure: (error: any) => {
-        console.log('error', error);
         toast.error(error.message);
       },
     });

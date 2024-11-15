@@ -22,7 +22,6 @@ const BookingFormPage = async () => {
       pilots = data.data;
     },
     failure: (error: any) => {
-      console.log(error);
     },
   });
 
@@ -33,7 +32,6 @@ const BookingFormPage = async () => {
       packages = data.data;
     },
     failure: (error: any) => {
-      console.log(error);
     },
   });
 

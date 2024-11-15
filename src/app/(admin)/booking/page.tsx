@@ -16,9 +16,7 @@ export default async function Booking() {
     success: (message: string, data: any) => {
       bookings.push(...data.data);
     },
-    failure: (error: any) => {
-      console.log('error', error);
-    },
+    failure: (error: any) => {},
   });
   return (
     <Card className='my-2 mx-4  justify-center items-center '>
