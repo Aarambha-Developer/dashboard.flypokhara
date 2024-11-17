@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -11,17 +11,17 @@ import {
   CardTitle,
   CardDescription,
   CardFooter,
-} from '@/components/ui/card';
-import { AlertCircle, Eye, EyeOff } from 'lucide-react';
-import Link from 'next/link';
-import requestHelper from '@/utils/request-helper';
-import toast from 'react-hot-toast';
-import { setCookie } from '@/lib/cookie-handler';
-import { useRouter } from 'next/navigation';
+} from "@/components/ui/card";
+import { AlertCircle, Eye, EyeOff } from "lucide-react";
+import Link from "next/link";
+import requestHelper from "@/utils/request-helper";
+import toast from "react-hot-toast";
+import { setCookie } from "@/lib/cookie-handler";
+import { useRouter } from "next/navigation";
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState({ email: '', password: '' });
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -35,14 +35,14 @@ export default function Login() {
     if (!validateEmail(email)) {
       setErrors((prev) => ({
         ...prev,
-        email: 'Invalid email format',
+        email: "Invalid email format",
       }));
       return;
     }
     if (password.length < 8) {
       setErrors((prev) => ({
         ...prev,
-        password: 'Password must be at least 8 characters',
+        password: "Password must be at least 8 characters",
       }));
       return;
     }
@@ -55,13 +55,14 @@ export default function Login() {
         password: password,
       },
       success: async (message: string, data: any) => {
-        await setCookie('access_token', await data?.data?.access_token);
-        await setCookie('role', data?.data?.user?.role);
+        await setCookie("access_token", (await data?.data?.access_token) || "");
+        await setCookie("role", data?.data?.user?.role);
+        await setCookie("user", data?.data?.user.name);
         toast.success(message);
         setLoading(false);
-        setEmail('');
-        setPassword('');
-        router.push('/');
+        setEmail("");
+        setPassword("");
+        router.push("/");
         return;
       },
       failure: (error: any) => {
@@ -71,48 +72,48 @@ export default function Login() {
   };
 
   return (
-    <div className='flex items-center justify-center p-4'>
-      <Card className='w-full max-w-md'>
+    <div className="flex items-center justify-center p-4">
+      <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className='text-2xl font-bold text-center'>
+          <CardTitle className="text-2xl font-bold text-center">
             Login
           </CardTitle>
-          <CardDescription className='text-center'>
+          <CardDescription className="text-center">
             Welcome back! Please login to your account
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
-          <CardContent className='space-y-4'>
-            <div className='space-y-2'>
-              <Label htmlFor='email'>Email</Label>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
               <Input
-                id='email'
-                type='email'
-                placeholder='you@example.com'
+                id="email"
+                type="email"
+                placeholder="you@example.com"
                 value={email}
                 onChange={(e) => {
                   setEmail(e.target.value);
                   setErrors((prev) => ({
                     ...prev,
                     email: validateEmail(e.target.value)
-                      ? ''
-                      : 'Invalid email format',
+                      ? ""
+                      : "Invalid email format",
                   }));
                 }}
               />
               {errors.email && (
-                <p className='text-sm text-red-500 flex items-center'>
-                  <AlertCircle className='w-4 h-4 mr-1' />
+                <p className="text-sm text-red-500 flex items-center">
+                  <AlertCircle className="w-4 h-4 mr-1" />
                   {errors.email}
                 </p>
               )}
             </div>
-            <div className='space-y-2'>
-              <Label htmlFor='password'>Password</Label>
-              <div className='relative'>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <div className="relative">
                 <Input
-                  id='password'
-                  type={showPassword ? 'text' : 'password'}
+                  id="password"
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => {
                     setPassword(e.target.value);
@@ -120,44 +121,47 @@ export default function Login() {
                       ...prev,
                       password:
                         e.target.value.length < 8
-                          ? 'Password must be at least 8 characters'
-                          : '',
+                          ? "Password must be at least 8 characters"
+                          : "",
                     }));
                   }}
                 />
                 <button
-                  type='button'
-                  className='absolute right-3 top-1/2 transform -translate-y-1/2'
-                  onClick={() => setShowPassword(!showPassword)}>
+                  type="button"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
                   {showPassword ? (
-                    <EyeOff className='h-4 w-4 text-gray-500' />
+                    <EyeOff className="h-4 w-4 text-gray-500" />
                   ) : (
-                    <Eye className='h-4 w-4 text-gray-500' />
+                    <Eye className="h-4 w-4 text-gray-500" />
                   )}
                 </button>
               </div>
               {errors.password && (
-                <p className='text-sm text-red-500 flex items-center'>
-                  <AlertCircle className='w-4 h-4 mr-1' />
+                <p className="text-sm text-red-500 flex items-center">
+                  <AlertCircle className="w-4 h-4 mr-1" />
                   {errors.password}
                 </p>
               )}
             </div>
-            <div className='flex items-center justify-between'>
+            <div className="flex items-center justify-between">
               <Link
-                href='/forgot-password'
-                className='text-sm text-primary hover:underline'>
+                href="/forgot-password"
+                className="text-sm text-primary hover:underline"
+              >
                 Forgot Password?
               </Link>
               <Link
-                href='/register'
-                className='text-sm text-primary hover:underline'>
+                href="/register"
+                className="text-sm text-primary hover:underline"
+              >
                 Don't have an account?
               </Link>
             </div>
           </CardContent>
           <CardFooter>
-            <Button type='submit' className='w-full'>
+            <Button type="submit" className="w-full">
               Login
             </Button>
           </CardFooter>
