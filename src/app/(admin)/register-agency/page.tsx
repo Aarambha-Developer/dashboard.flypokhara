@@ -7,7 +7,15 @@ export default async function RegisterAgency() {
 
   return (
     <div>
-      <RegisterForm role={role} />
+      {role === "ADMIN" ? (
+        <RegisterForm role={role} />
+      ) : (
+        <div>
+          <h2 className="flex justify-center items-center text-lg text-red-500 mt-20 uppercase">
+            Unauthorized page
+          </h2>{" "}
+        </div>
+      )}
     </div>
   );
 }

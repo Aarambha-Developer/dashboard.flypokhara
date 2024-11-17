@@ -42,8 +42,10 @@ export type FlightBooking = {
 
 export function FlightBookingsTableComponent({
   bookings,
+  role,
 }: {
   bookings: FlightBooking[];
+  role: string | undefined;
 }) {
   const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({});
   const flightBookings = bookings;
@@ -77,6 +79,7 @@ export function FlightBookingsTableComponent({
           {flightBookings.map(
             (booking, index) => (
               console.log("booking", booking),
+              console.log("role", role),
               (
                 <Fragment key={booking.id}>
                   <TableRow key={`${index}-row`}>
@@ -107,6 +110,14 @@ export function FlightBookingsTableComponent({
                             Additional Details
                           </h3>
                           <dl className="grid grid-cols-2  gap-x-4 gap-y-2">
+                            {role === "ADMIN" && (
+                              <>
+                                <dt className="font-medium ">
+                                  Booking Done by :
+                                </dt>
+                                <dd>{booking.user.name}</dd>
+                              </>
+                            )}
                             <dt className="font-medium ">Passenger Name :</dt>
                             <dd>{booking.pName}</dd>
                             <dt className="font-medium">Pilot ID:</dt>
