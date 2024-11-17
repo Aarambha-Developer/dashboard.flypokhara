@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { getCookie } from "./lib/cookie-handler";
+// import { getCookie } from "./lib/cookie-handler";
 
 export function middleware(request: NextRequest) {
   const role = request.cookies.get("role")?.value === "ADMIN";
@@ -11,7 +11,8 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
-  const access_token = getCookie("access_token");
+  const access_token = request.cookies.get("access_token")?.value;
+  // console.log("access_token", access_token);
   if (!access_token) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
