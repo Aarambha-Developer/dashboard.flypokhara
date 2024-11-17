@@ -43,7 +43,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           # passphrase: ${{ secrets.PASSPHRASE }} # Added passphrase support
           script: |
-             cd /home/ubuntu/clients/dashboard-flypokhara/dashboard.flypokhara
+            cd /home/ubuntu/clients/dashboard-flypokhara/dashboard.flypokhara
             git pull origin main
             sudo npm ci --production
             sudo npm ci build
