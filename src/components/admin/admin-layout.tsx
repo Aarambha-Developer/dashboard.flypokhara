@@ -38,12 +38,12 @@ export default function AdminLayout({
 
   const router = useRouter();
 
-  useEffect(() => {
-    const isLoggedIn = getCookie("access_token");
-    if (!isLoggedIn) {
-      router.push("/login");
-    }
-  }, []);
+  // useEffect(() => {
+  //   const isLoggedIn = getCookie("access_token");
+  //   if (!isLoggedIn) {
+  //     router.push("/login");
+  //   }
+  // }, []);
 
   return (
     <div className="flex h-screen bg-gray-100">
