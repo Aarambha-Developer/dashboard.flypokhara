@@ -341,7 +341,7 @@ export default function BookingForm({
 
   const form = useForm<BookingFormSchema>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
+    defaultValues: bookingDetails?bookingDetails:{
       flightDate: new Date(),
       nationality: undefined,
       prePayment: 0,
@@ -424,9 +424,7 @@ export default function BookingForm({
           },
         });
   };
-  useEffect(() => {
-    form.reset(bookingDetails ? bookingDetails : {});
-  }, []);
+
   return (
     <>
       <div className="max-w-6xl mx-auto bg-white rounded-lg pt-4  mt-20 ">
