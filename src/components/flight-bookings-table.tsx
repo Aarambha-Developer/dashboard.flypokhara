@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment, useState } from "react";
-import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
+import { ChevronDownIcon, ChevronUpIcon, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -47,6 +47,7 @@ export type FlightBooking = {
   };
   package: {
     title: string;
+    duration: string;
   };
   pName: string;
   pId: string;
@@ -81,7 +82,7 @@ export function FlightBookingsTableComponent({
   const [currentPage, setCurrentPage] = useState(meta.page);
   const [perPage, setPerPage] = useState(10);
 
-  console.log("meta", meta);
+  // console.log("meta", meta);
 
   return (
     <>
@@ -103,6 +104,7 @@ export function FlightBookingsTableComponent({
             <TableHead>Country</TableHead>
             <TableHead>Total Price</TableHead>
             <TableHead>Flight Type</TableHead>
+            <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -138,6 +140,11 @@ export function FlightBookingsTableComponent({
                 </TableCell>
                 <TableCell>{booking.totalPrice}</TableCell>
                 <TableCell>{booking.flightType}</TableCell>
+                <TableCell className=" flex  items-center">
+                  <Link href={`/booking/${booking.id}/edit`}>
+                    <Pencil className="h-4 w-4" />{" "}
+                  </Link>
+                </TableCell>
               </TableRow>
               {expandedRows[booking.id] && (
                 <TableRow key={`${index}-details`}>
@@ -158,7 +165,13 @@ export function FlightBookingsTableComponent({
                           {booking.pilot?.name ? booking.pilot?.name : "-"}
                         </dd>
                         <dt className="font-medium">Package :</dt>
-                        <dd>{booking.package.title}</dd>
+                        <dd>
+                          {booking.package.title} &nbsp;
+                          <span className="font-[600]">
+                            {" "}
+                            ({booking.package.duration} minutes)
+                          </span>
+                        </dd>
                         <dt className="font-medium">Discount:</dt>
                         <dd>{booking.discount}</dd>
                         <dt className="font-medium">Pre-payment:</dt>
