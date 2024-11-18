@@ -17,7 +17,7 @@ const EditBooking = async ({ params }: { params: Promise<{ id: string }> }) => {
     id: number;
     title: string;
   }[] = [];
-  let bookingDetails: BookingFormSchema&{id:number|undefined} = {
+  let bookingDetails: BookingFormSchema & { id: number | undefined } = {
     pilotId: 0,
     packageId: 0,
     nationality: '',
@@ -31,9 +31,9 @@ const EditBooking = async ({ params }: { params: Promise<{ id: string }> }) => {
     ticketNo: '',
     aircraftType: 'OPEN',
     flightType: 'COMMERCIAL',
-      includes: false,
-    id:undefined
-  } 
+    includes: false,
+    id: undefined,
+  };
   await requestHelper.get({
     endPoint: `${process.env.NEXT_PUBLIC_API_URL}/pilot`,
     token: token,
@@ -55,22 +55,22 @@ const EditBooking = async ({ params }: { params: Promise<{ id: string }> }) => {
     endPoint: `${process.env.NEXT_PUBLIC_API_URL}/booking/${id}`,
     token: token,
     success: (message: string, data: any) => {
-        bookingDetails = {
-        id: data.data.id,
-        pilotId: data.data.pilotId,
-        packageId: data.data.packageId,
-        nationality: data.data.nationality,
-        discount: data.data.discount,
-        prePayment: data.data.prePayment,
-        paymentMethod: data.data.paymentMethod,
-        pName: data.data.pName,
-        pId: data.data.pId,
-        pIdType: data.data.pIdType,
-        flightDate: new Date(data.data.flightDate),
-        ticketNo: data.data.ticketNo,
-        aircraftType: data.data.aircraftType,
-        flightType: data.data.flightType,
-        includes: data.data.includes,
+      bookingDetails = {
+        id: data.data.id || undefined,
+        pilotId: data.data.pilotId || undefined,
+        packageId: data.data.packageId || undefined,
+        nationality: data.data.nationality || '',
+        discount: data.data.discount || 0,
+        prePayment: data.data.prePayment || 0,
+        paymentMethod: data.data.paymentMethod || '',
+        pName: data.data.pName || '',
+        pId: data.data.pId || '',
+        pIdType: data.data.identificationType || '',
+        flightDate: new Date(data.data.flightDate) || undefined,
+        ticketNo: data.data.ticketNo || '',
+        aircraftType: data.data.aircraftType || 'OPEN',
+        flightType: data.data.flightType || 'COMMERCIAL',
+        includes: data.data.includes || false,
       };
     },
     failure: (error: any) => {},
