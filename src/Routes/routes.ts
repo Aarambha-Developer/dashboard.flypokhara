@@ -6,8 +6,8 @@ const routes = [
   },
   {
     id: 2,
-    href: "/register-agency",
-    name: "Register Agency",
+    href: "/agencies",
+    name: " Agencies",
     adminOnly: true, // Adding a flag to indicate admin-only access
   },
   {
