@@ -571,7 +571,14 @@ export default function BookingForm({
                     <Select onValueChange={field.onChange}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Please select aircraft type" />
+                          <SelectValue
+                            // defaultValue={field.value}
+                            placeholder={
+                              field.value
+                                ? field.value
+                                : "Please select aircraft type"
+                            }
+                          />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -609,11 +616,25 @@ export default function BookingForm({
                     <Select onValueChange={field.onChange}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Please select flight package">
+                          <SelectValue
+                            placeholder={
+                              field.value
+                                ? flightPackages.find(
+                                    (flight: any) => flight.id == field.value
+                                  )?.title
+                                : "Please select flight package"
+                            }
+                          >
                             {field.value
-                              ? flightPackages.find(
-                                  (flight: any) => flight.id == field.value
-                                )?.title
+                              ? `${
+                                  flightPackages.find(
+                                    (flight: any) => flight.id == field.value
+                                  )?.title
+                                } (${
+                                  flightPackages.find(
+                                    (flight: any) => flight.id == field.value
+                                  )?.duration
+                                } minutes)`
                               : "Please select flight package"}
                           </SelectValue>
                         </SelectTrigger>
