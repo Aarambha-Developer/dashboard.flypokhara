@@ -40,7 +40,7 @@ const formSchema = z.object({
     .nullable(),
   paymentMethod: z.any(),
 
-  packageId: z.coerce.number(),
+  packageId: z.coerce.number({ message: "Flight Package is required" }),
   pilotId: z.any(),
   includes: z.boolean(),
   // commission: z.coerce.number().nullable(),
@@ -341,22 +341,24 @@ export default function BookingForm({
 
   const form = useForm<BookingFormSchema>({
     resolver: zodResolver(formSchema),
-    defaultValues: bookingDetails?bookingDetails:{
-      flightDate: new Date(),
-      nationality: undefined,
-      prePayment: 0,
-      discount: 0,
-      flightType: "COMMERCIAL",
-      paymentMethod: undefined,
-      packageId: undefined,
-      pilotId: undefined,
-      includes: false,
-      pName: "",
-      pId: undefined,
-      ticketNo: "",
-      pIdType: undefined,
-      aircraftType: undefined,
-    },
+    defaultValues: bookingDetails
+      ? bookingDetails
+      : {
+          flightDate: new Date(),
+          nationality: undefined,
+          prePayment: 0,
+          discount: 0,
+          flightType: "COMMERCIAL",
+          paymentMethod: undefined,
+          packageId: undefined,
+          pilotId: undefined,
+          includes: false,
+          pName: "",
+          pId: undefined,
+          ticketNo: "",
+          pIdType: undefined,
+          aircraftType: undefined,
+        },
   });
 
   const onSubmit = async (data: BookingFormSchema) => {
@@ -427,14 +429,14 @@ export default function BookingForm({
 
   return (
     <>
-      <div className="max-w-6xl mx-auto bg-white rounded-lg pt-4  mt-20 ">
+      <div className="max-w-6xl mx-auto bg-white rounded-lg pt-4  mt-4 ">
         <div className="flex justify-center">
-          <h2 className="font-medium text-3xl text-gray-800">Booking Form</h2>
+          <h2 className="font-medium text-2xl text-gray-800">Booking Form</h2>
         </div>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="my-8 p-8  rounded-lg w-[100%] "
+            className=" px-8 py-4  rounded-lg w-[100%] "
           >
             {/* name and nationality */}
             <div className="grid gap-4 pb-4 md:grid-cols-2">
@@ -684,8 +686,11 @@ export default function BookingForm({
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
-                          Pre Payment{" "}
-                          <span className="text-red-600 text-lg">*</span>
+                          Pre Payment &nbsp;
+                          {form.getValues("nationality") === "Nepal" ||
+                          form.getValues("nationality") === "India"
+                            ? "(Rs.)"
+                            : "(USD)"}
                         </FormLabel>
                         <FormControl>
                           <Input placeholder="Pre Payment" {...field} />
@@ -702,7 +707,6 @@ export default function BookingForm({
                       <FormItem>
                         <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
                           Payment Method{" "}
-                          <span className="text-red-600 text-lg">*</span>
                         </FormLabel>
                         <Select onValueChange={field.onChange}>
                           <FormControl>
@@ -741,7 +745,7 @@ export default function BookingForm({
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
-                          Pilot <span className="text-red-600 text-lg">*</span>
+                          Pilot
                         </FormLabel>
                         <Select onValueChange={field.onChange}>
                           <FormControl>
@@ -781,7 +785,6 @@ export default function BookingForm({
                       <FormItem>
                         <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
                           Ticket No{" "}
-                          <span className="text-red-600 text-lg">*</span>
                         </FormLabel>
                         <FormControl>
                           <Input placeholder="Ticket No" {...field} />
@@ -799,7 +802,11 @@ export default function BookingForm({
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
-                          Discount
+                          Discount &nbsp;
+                          {form.getValues("nationality") === "Nepal" ||
+                          form.getValues("nationality") === "India"
+                            ? "(Rs.)"
+                            : "(USD)"}
                         </FormLabel>
                         <FormControl>
                           <Input placeholder="Discount" {...field} />
@@ -815,7 +822,6 @@ export default function BookingForm({
                       <FormItem>
                         <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
                           Flight Type
-                          <span className="text-red-600 text-lg">*</span>
                         </FormLabel>
                         <Select onValueChange={field.onChange}>
                           <FormControl>
@@ -863,7 +869,7 @@ export default function BookingForm({
               </div>
             )}
 
-            <div className="flex justify-center mx-auto items-center  my-4">
+            <div className="flex justify-center mx-auto items-center  my-2">
               <Button className="bg-blue-500 lg:text-base px-14 py-2 transition-all duration-300 hover:scale-105 hover:bg-blue-600">
                 {" "}
                 Submit &nbsp; {isSubmitting && <Loading />}
