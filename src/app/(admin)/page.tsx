@@ -110,7 +110,6 @@ const Dashboard = async () => {
     token,
     success: (message: string, data: any) => {
       bookingData = data?.data;
-      console.log(bookingData);
     },
     failure: (error: any) => {
       console.log(error, 'error');
