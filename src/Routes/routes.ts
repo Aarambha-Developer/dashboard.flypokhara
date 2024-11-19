@@ -15,6 +15,11 @@ const routes = [
     href: "/booking",
     name: "Booking",
   },
+  {
+    id: 4,
+    href: "/change-password",
+    name: "Settings",
+  },
 ];
 
 export default routes;
