@@ -412,6 +412,7 @@ export default function BookingForm({
                   pIdType: form.getValues("pIdType"),
                   flightDate: form.getValues("flightDate"),
                   packageId: Number(form.getValues("packageId")),
+                  paymentMethod: form.getValues("paymentMethod") || undefined,
                   includes: form.getValues("includes"),
                   aircraftType: form.getValues("aircraftType"),
                 },
