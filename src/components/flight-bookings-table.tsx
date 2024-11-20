@@ -15,6 +15,13 @@ import Link from 'next/link';
 import { format } from 'date-fns';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { PaginationWithLinks } from './ui/pagination-with-links';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './ui/select';
 import requestHelper from '@/utils/request-helper';
 import { getCookie } from '@/lib/cookie-handler';
 import toast from 'react-hot-toast';
@@ -25,6 +32,7 @@ import {
 import BookingSearch from './booking-search';
 
 export type FlightBooking = {
+  status: StatusType | undefined;
   id: number;
   userId: number;
   pilot: {
@@ -34,7 +42,6 @@ export type FlightBooking = {
   packageId: number;
   nationality: string;
   totalPrice: number;
-  status: StatusType;
 
   discount: number;
   prePayment: number;
@@ -81,12 +88,10 @@ export function FlightBookingsTableComponent({
     setExpandedRows((prev) => ({ ...prev, [id]: !prev[id] }));
   };
   const [perPage, setPerPage] = useState(10);
-  async function handleStatusChange(packageId: number, status: string) {
+  async function handleStatusChange(id: number, status: StatusType) {
     await requestHelper.patch({
-      endPoint: `${process.env.NEXT_PUBLIC_API_URL}/booking/status/${packageId}`,
-      data: {
-        status: status,
-      },
+      endPoint: `${process.env.NEXT_PUBLIC_API_URL}/booking/status/${id}`,
+      data: { status },
       token: await getCookie('access_token'),
       success: (message: string, data: any) => {
         toast.success(message);
@@ -105,7 +110,6 @@ export function FlightBookingsTableComponent({
         <div>
           <BookingSearch />
         </div>
-
         <Link
           href='/booking/add'
           className='m-4 px-4 py-2 bg-gray-800 text-white rounded-sm'>
@@ -176,9 +180,8 @@ export function FlightBookingsTableComponent({
                 )}
               </Button>
             </TableHead>
-
             <TableHead>
-              Passenager Name
+              Passenger Name
               <Button
                 variant='ghost'
                 size='sm'
@@ -232,6 +235,16 @@ export function FlightBookingsTableComponent({
                         word.slice(1).toLowerCase()
                     )
                     .join(' ')}
+                </TableCell>
+                <TableCell>{booking.pName}</TableCell>
+                <TableCell>{booking.user?.name}</TableCell>
+                <TableCell>
+                  <BookingStatusSelectComponent
+                    bookingId={booking.id}
+                    role={role}
+                    initialStatus={booking.status}
+                    onStatusChange={handleStatusChange}
+                  />
                 </TableCell>
                 <TableCell className=' flex  items-center'>
                   <Link href={`/booking/${booking.id}/edit`}>
