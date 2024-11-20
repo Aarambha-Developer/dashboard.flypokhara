@@ -26,7 +26,7 @@ const UserSchema = z
     password: z.string().min(8, "Password must be at least 8 characters long"),
     contact: z.string().regex(/^\d{10}$/, "Contact must be a 10-digit number"),
     about: z.string(),
-    role: z.enum(["AGENCY", "ADMIN"]),
+    role: z.enum(["AGENCY", "ADMIN", "AIRPORT"]),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -183,7 +183,7 @@ export function RegisterForm({ role }: { role: string | undefined }) {
               onClick={toggleConfirmPasswordVisibility}
               className="absolute inset-y-0 right-3 flex items-center"
             >
-              {passwordVisible ? (
+              {confirmPasswordVisible ? (
                 <Eye className="h-5 w-5" />
               ) : (
                 <EyeOff className="h-5 w-5" />
@@ -221,6 +221,7 @@ export function RegisterForm({ role }: { role: string | undefined }) {
             <SelectContent>
               <SelectItem value="AGENCY">Agency</SelectItem>
               <SelectItem value="ADMIN">Admin</SelectItem>
+              <SelectItem value="AIRPORT">Airport</SelectItem>
             </SelectContent>
           </Select>
           {errors.role && <p className="text-sm text-red-500">{errors.role}</p>}
