@@ -39,6 +39,7 @@ export default async function Booking({ searchParams }: { searchParams: any }) {
     token: token,
     success: (message: string, data: any) => {
       bookings.push(...data.data.bookings);
+    
       meta = data.data.meta;
     },
     failure: (error: any) => {},

@@ -15,10 +15,25 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { useRouter, useSearchParams } from "next/navigation";
 import { PaginationWithLinks } from "./ui/pagination-with-links";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import requestHelper from "@/utils/request-helper";
 import { getCookie } from "@/lib/cookie-handler";
+import toast from "react-hot-toast";
+import {
+  BookingStatusSelectComponent,
+  StatusType,
+} from "./booking-status-select";
+import BookingSearch from "./booking-search";
 import UpdateForm from "./airport/update-form";
 
 export type FlightBooking = {
+  status: StatusType | undefined;
   id: number;
   userId: number;
   pilot: {
@@ -85,13 +100,28 @@ export function FlightBookingsTableComponent({
     setExpandedRows((prev) => ({ ...prev, [id]: !prev[id] }));
   };
   const [perPage, setPerPage] = useState(10);
-
-  // console.log("meta", meta);
+  async function handleStatusChange(id: number, status: StatusType) {
+    await requestHelper.patch({
+      endPoint: `${process.env.NEXT_PUBLIC_API_URL}/booking/status/${id}`,
+      data: { status },
+      token: await getCookie("access_token"),
+      success: (message: string, data: any) => {
+        toast.success(message);
+        router.refresh();
+      },
+      failure: (error: any) => {
+        toast.error(error.message);
+      },
+    });
+  }
 
   return (
     <>
       <div className="flex items-center w-full justify-between">
         <h2 className="text-xl m-4   rounded-lg w-fit p-3">Boooking History</h2>
+        <div>
+          <BookingSearch />
+        </div>
         {role !== "AIRPORT" && (
           <Link
             href="/booking/add"
@@ -169,19 +199,19 @@ export function FlightBookingsTableComponent({
               </Button>
             </TableHead>
             <TableHead>
-              Total Price{" "}
+              Passenger Name
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() =>
                   router.push(
-                    `/booking?sortBy=totalPrice&sortOrder=${
+                    `/booking?sortBy=pName&sortOrder=${
                       searchParams?.get("sortOrder") === "asc" ? "desc" : "asc"
                     }`
                   )
                 }
               >
-                {searchParams?.get("sortBy") === "totalPrice" &&
+                {searchParams?.get("sortBy") === "pName" &&
                 searchParams?.get("sortOrder") === "asc" ? (
                   <ChevronUpIcon className="h-4 w-4" />
                 ) : (
@@ -189,28 +219,10 @@ export function FlightBookingsTableComponent({
                 )}
               </Button>
             </TableHead>
-            <TableHead>
-              Flight Type{" "}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() =>
-                  router.push(
-                    `/booking?sortBy=flightType&sortOrder=${
-                      searchParams?.get("sortOrder") === "asc" ? "desc" : "asc"
-                    }`
-                  )
-                }
-              >
-                {searchParams?.get("sortBy") === "flightType" &&
-                searchParams?.get("sortOrder") === "asc" ? (
-                  <ChevronUpIcon className="h-4 w-4" />
-                ) : (
-                  <ChevronDownIcon className="h-4 w-4" />
-                )}
-              </Button>
-            </TableHead>
-            {role === "ADMIN" && <TableHead>Actions</TableHead>}
+
+            <TableHead>Agency Name</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -244,16 +256,21 @@ export function FlightBookingsTableComponent({
                     )
                     .join(" ")}
                 </TableCell>
-                <TableCell>{booking.totalPrice}</TableCell>
-                <TableCell>{booking.flightType}</TableCell>
-
-                {role === "ADMIN" && (
-                  <TableCell className=" flex  items-center">
-                    <Link href={`/booking/${booking.id}/edit`}>
-                      <Pencil className="h-4 w-4" />{" "}
-                    </Link>
-                  </TableCell>
-                )}
+                <TableCell>{booking.pName}</TableCell>
+                <TableCell>{booking.user?.name}</TableCell>
+                <TableCell>
+                  <BookingStatusSelectComponent
+                    bookingId={booking.id}
+                    role={role}
+                    initialStatus={booking.status}
+                    onStatusChange={handleStatusChange}
+                  />
+                </TableCell>
+                <TableCell className=" flex  items-center">
+                  <Link href={`/booking/${booking.id}/edit`}>
+                    <Pencil className="h-4 w-4" />{" "}
+                  </Link>
+                </TableCell>
               </TableRow>
               {expandedRows[booking.id] && (
                 <TableRow key={`${index}-details`}>
