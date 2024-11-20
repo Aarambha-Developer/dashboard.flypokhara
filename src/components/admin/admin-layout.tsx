@@ -21,20 +21,24 @@ export default function AdminLayout({
 
   const [isAdmin, setIsAdmin] = useState<string | undefined>(undefined);
   const [user, setUser] = useState<string | undefined>(undefined);
+  const [role, setRole] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     const fetchRole = async () => {
       const role = await getCookie("role");
       const user = await getCookie("user");
+      setRole(role);
       setIsAdmin(role);
       setUser(user);
     };
     fetchRole();
   }, []);
 
-  const filteredRoutes = routes.filter(
-    (route) => !route.adminOnly || isAdmin === "ADMIN"
-  );
+  // const filteredRoutes = routes.filter(
+  //   (route) => !route.adminOnly || isAdmin === "ADMIN"
+  // );
+
+  // const roles = ["ADMIN", "AGENCY"];
 
   const router = useRouter();
 
@@ -54,16 +58,18 @@ export default function AdminLayout({
         } md:relative md:translate-x-0 transition duration-200 ease-in-out`}
       >
         <nav>
-          {filteredRoutes.map((route, index) => (
-            <Link
-              key={index}
-              href={route.href}
-              className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white"
-            >
-              <BarChart3 className="inline-block mr-2" size={20} />
-              {route.name}
-            </Link>
-          ))}
+          {routes
+            .filter((route) => route.role.includes(role || "")) // Filter routes based on the user's role
+            .map((route) => (
+              <Link
+                key={route.id} // Use route.id instead of index
+                href={route.href}
+                className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white"
+              >
+                <BarChart3 className="inline-block mr-2" size={20} />
+                {route.name}
+              </Link>
+            ))}
         </nav>
       </aside>
 
