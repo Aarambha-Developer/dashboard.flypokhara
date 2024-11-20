@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { Fragment, useState } from "react";
-import { ChevronDownIcon, ChevronUpIcon, Pencil } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Fragment, useState } from 'react';
+import { ChevronDownIcon, ChevronUpIcon, Pencil } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -10,11 +10,26 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import Link from "next/link";
-import { format } from "date-fns";
-import { useRouter, useSearchParams } from "next/navigation";
-import { PaginationWithLinks } from "./ui/pagination-with-links";
+} from '@/components/ui/table';
+import Link from 'next/link';
+import { format } from 'date-fns';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { PaginationWithLinks } from './ui/pagination-with-links';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './ui/select';
+import requestHelper from '@/utils/request-helper';
+import { getCookie } from '@/lib/cookie-handler';
+import toast from 'react-hot-toast';
+import {
+  BookingStatusSelectComponent,
+  StatusType,
+} from './booking-status-select';
+import BookingSearch from './booking-search';
 
 export type FlightBooking = {
   id: number;
@@ -26,6 +41,7 @@ export type FlightBooking = {
   packageId: number;
   nationality: string;
   totalPrice: number;
+  status: StatusType;
 
   discount: number;
   prePayment: number;
@@ -72,13 +88,30 @@ export function FlightBookingsTableComponent({
     setExpandedRows((prev) => ({ ...prev, [id]: !prev[id] }));
   };
   const [perPage, setPerPage] = useState(10);
-
-  // console.log("meta", meta);
+  async function handleStatusChange(packageId: number, status: string) {
+    await requestHelper.patch({
+      endPoint: `${process.env.NEXT_PUBLIC_API_URL}/booking/status/${packageId}`,
+      data: {
+        status: status,
+      },
+      token: await getCookie('access_token'),
+      success: (message: string, data: any) => {
+        toast.success(message);
+        router.refresh();
+      },
+      failure: (error: any) => {
+        toast.error(error.message);
+      },
+    });
+  }
 
   return (
     <>
       <div className='flex items-center w-full justify-between'>
         <h2 className='text-xl m-4   rounded-lg w-fit p-3'>Boooking History</h2>
+        <div>
+          <BookingSearch />
+        </div>
         <Link
           href='/booking/add'
           className='m-4 px-4 py-2 bg-gray-800 text-white rounded-sm'>
@@ -149,19 +182,20 @@ export function FlightBookingsTableComponent({
                 )}
               </Button>
             </TableHead>
+
             <TableHead>
-              Total Price{' '}
+              Passenager Name
               <Button
                 variant='ghost'
                 size='sm'
                 onClick={() =>
                   router.push(
-                    `/booking?sortBy=totalPrice&sortOrder=${
+                    `/booking?sortBy=pName&sortOrder=${
                       searchParams?.get('sortOrder') === 'asc' ? 'desc' : 'asc'
                     }`
                   )
                 }>
-                {searchParams?.get('sortBy') === 'totalPrice' &&
+                {searchParams?.get('sortBy') === 'pName' &&
                 searchParams?.get('sortOrder') === 'asc' ? (
                   <ChevronUpIcon className='h-4 w-4' />
                 ) : (
@@ -169,26 +203,8 @@ export function FlightBookingsTableComponent({
                 )}
               </Button>
             </TableHead>
-            <TableHead>
-              Flight Type{' '}
-              <Button
-                variant='ghost'
-                size='sm'
-                onClick={() =>
-                  router.push(
-                    `/booking?sortBy=flightType&sortOrder=${
-                      searchParams?.get('sortOrder') === 'asc' ? 'desc' : 'asc'
-                    }`
-                  )
-                }>
-                {searchParams?.get('sortBy') === 'flightType' &&
-                searchParams?.get('sortOrder') === 'asc' ? (
-                  <ChevronUpIcon className='h-4 w-4' />
-                ) : (
-                  <ChevronDownIcon className='h-4 w-4' />
-                )}
-              </Button>
-            </TableHead>
+            <TableHead>Agency Name</TableHead>
+            <TableHead>Status</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -222,8 +238,16 @@ export function FlightBookingsTableComponent({
                     )
                     .join(' ')}
                 </TableCell>
-                <TableCell>{booking.totalPrice}</TableCell>
-                <TableCell>{booking.flightType}</TableCell>
+                <TableCell>{booking.pName}</TableCell>
+                <TableCell>{booking.user?.name}</TableCell>
+                <TableCell>
+                  <BookingStatusSelectComponent
+                    bookingId={booking.id}
+                    role={role}
+                    initialStatus={booking.status}
+                    onStatusChange={handleStatusChange}
+                  />
+                </TableCell>
                 <TableCell className=' flex  items-center'>
                   <Link href={`/booking/${booking.id}/edit`}>
                     <Pencil className='h-4 w-4' />{' '}
