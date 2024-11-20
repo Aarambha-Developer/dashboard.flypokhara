@@ -11,7 +11,18 @@ import { Card } from "@/components/ui/card";
 
 export default async function Booking({ searchParams }: { searchParams: any }) {
   let role = await getCookie("role");
+  let token = await getCookie("access_token");
+
   const bookings: FlightBooking[] = [];
+  let pilots: {
+    id: number;
+    name: string;
+  }[] = [];
+
+  let aircrafts: {
+    id: number;
+    aircraftNo: string;
+  }[] = [];
   // console.log("params", params);
   let meta: meta = {
     total: 0,
@@ -25,7 +36,7 @@ export default async function Booking({ searchParams }: { searchParams: any }) {
   await requestHelper.get({
     endPoint: `${process.env.NEXT_PUBLIC_API_URL}/booking`,
     params: await searchParams,
-    token: await getCookie("access_token"),
+    token: token,
     success: (message: string, data: any) => {
       bookings.push(...data.data.bookings);
     
@@ -33,12 +44,33 @@ export default async function Booking({ searchParams }: { searchParams: any }) {
     },
     failure: (error: any) => {},
   });
+
+  await requestHelper.get({
+    endPoint: `${process.env.NEXT_PUBLIC_API_URL}/pilot`,
+    token: token,
+    success: (message: string, data: any) => {
+      pilots = data.data;
+    },
+    failure: (error: any) => {},
+  });
+
+  await requestHelper.get({
+    endPoint: `${process.env.NEXT_PUBLIC_API_URL}/aircraft`,
+    token: token,
+    success: (message: string, data: any) => {
+      aircrafts = data.data;
+    },
+    failure: (error: any) => {},
+  });
+
   return (
     <Card className="my-2 mx-4  justify-center items-center ">
       <FlightBookingsTableComponent
         bookings={bookings}
         role={role}
         meta={meta}
+        pilots={pilots}
+        aircrafts={aircrafts}
       />
     </Card>
   );
