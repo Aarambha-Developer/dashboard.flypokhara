@@ -15,13 +15,6 @@ import Link from 'next/link';
 import { format } from 'date-fns';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { PaginationWithLinks } from './ui/pagination-with-links';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from './ui/select';
 import requestHelper from '@/utils/request-helper';
 import { getCookie } from '@/lib/cookie-handler';
 import toast from 'react-hot-toast';
@@ -112,6 +105,7 @@ export function FlightBookingsTableComponent({
         <div>
           <BookingSearch />
         </div>
+
         <Link
           href='/booking/add'
           className='m-4 px-4 py-2 bg-gray-800 text-white rounded-sm'>
@@ -203,6 +197,7 @@ export function FlightBookingsTableComponent({
                 )}
               </Button>
             </TableHead>
+
             <TableHead>Agency Name</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Actions</TableHead>
@@ -237,16 +232,6 @@ export function FlightBookingsTableComponent({
                         word.slice(1).toLowerCase()
                     )
                     .join(' ')}
-                </TableCell>
-                <TableCell>{booking.pName}</TableCell>
-                <TableCell>{booking.user?.name}</TableCell>
-                <TableCell>
-                  <BookingStatusSelectComponent
-                    bookingId={booking.id}
-                    role={role}
-                    initialStatus={booking.status}
-                    onStatusChange={handleStatusChange}
-                  />
                 </TableCell>
                 <TableCell className=' flex  items-center'>
                   <Link href={`/booking/${booking.id}/edit`}>
