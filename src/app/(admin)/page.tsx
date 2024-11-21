@@ -116,6 +116,38 @@ const Dashboard = async () => {
     },
   });
 
+  let pilots: {
+    id: number;
+    name: string;
+  }[] = [];
+
+  let aircrafts: {
+    id: number;
+    aircraftNo: string;
+  }[] = [];
+  // console.log("params", params);
+
+  await requestHelper.get({
+    endPoint: `${process.env.NEXT_PUBLIC_API_URL}/pilot`,
+    token: token,
+    success: (message: string, data: any) => {
+      console.log("pilot from ", data);
+      pilots = data.data;
+    },
+    failure: (error: any) => {
+      console.log(error);
+    },
+  });
+
+  await requestHelper.get({
+    endPoint: `${process.env.NEXT_PUBLIC_API_URL}/aircraft`,
+    token: token,
+    success: (message: string, data: any) => {
+      aircrafts = data.data;
+    },
+    failure: (error: any) => {},
+  });
+
   return (
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
@@ -145,8 +177,8 @@ const Dashboard = async () => {
             bookings={bookingData?.bookings}
             meta={bookingData?.meta}
             role={role || ""}
-            pilots={[]}
-            aircrafts={[]}
+            pilots={pilots}
+            aircrafts={aircrafts}
           />
         </Card>
       }

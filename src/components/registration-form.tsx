@@ -94,7 +94,7 @@ export function RegisterForm({ role }: { role: string | undefined }) {
         success: async (message: string, data: any) => {
           toast.success(message);
           setLoading(false);
-          console.log("data", data);
+          // console.log("data", data);
           !(await getCookie("access_token"))
             ? router.push("/login")
             : router.push("/agencies");

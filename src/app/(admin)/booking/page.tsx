@@ -32,26 +32,16 @@ export default async function Booking({ searchParams }: { searchParams: any }) {
     hasPrevPage: false,
   };
 
-  // console.log("searchParams", await searchParams);
-  await requestHelper.get({
-    endPoint: `${process.env.NEXT_PUBLIC_API_URL}/booking`,
-    params: await searchParams,
-    token: token,
-    success: (message: string, data: any) => {
-      bookings.push(...data.data.bookings);
-    
-      meta = data.data.meta;
-    },
-    failure: (error: any) => {},
-  });
-
   await requestHelper.get({
     endPoint: `${process.env.NEXT_PUBLIC_API_URL}/pilot`,
     token: token,
     success: (message: string, data: any) => {
+      console.log("pilot from ", data);
       pilots = data.data;
     },
-    failure: (error: any) => {},
+    failure: (error: any) => {
+      console.log(error);
+    },
   });
 
   await requestHelper.get({
@@ -62,6 +52,20 @@ export default async function Booking({ searchParams }: { searchParams: any }) {
     },
     failure: (error: any) => {},
   });
+  // console.log("searchParams", await searchParams);
+  await requestHelper.get({
+    endPoint: `${process.env.NEXT_PUBLIC_API_URL}/booking`,
+    params: await searchParams,
+    token: token,
+    success: (message: string, data: any) => {
+      bookings.push(...data.data.bookings);
+
+      meta = data.data.meta;
+    },
+    failure: (error: any) => {},
+  });
+
+  // console.log("pilot from ", pilots);
 
   return (
     <Card className="my-2 mx-4  justify-center items-center ">
