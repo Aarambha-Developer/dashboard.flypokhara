@@ -31,8 +31,8 @@ import { useRouter } from "next/navigation";
 const formSchema = z.object({
   flightDate: z.date(),
   nationality: z.string({ message: "Country is required" }),
-  prePayment: z.coerce.number(),
-  discount: z.coerce.number(),
+  prePayment: z.coerce.number({message:"Invalid Prepayment amount"}),
+  discount: z.coerce.number({message:"Invalid Discount amount"}),
   flightType: z
     .enum(["FREE", "TRAINING", "COMMERCIAL", "TEST"], {
       errorMap: () => ({ message: "Please select a flight type." }),
@@ -506,7 +506,7 @@ export default function BookingForm({
                       <span className="text-red-600 text-lg">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="Citizenship / Passport" {...field} />
+                      <Input placeholder="Citizenship / Passport" value={field.value||""} onChange={field.onChange} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -525,7 +525,8 @@ export default function BookingForm({
                     <FormControl>
                       <Input
                         placeholder="Citizenship ID / Passport ID"
-                        {...field}
+                        value={field.value || ""}
+                        onChange={field.onChange}
                       />
                     </FormControl>
                     <FormMessage className="font-normal" />
