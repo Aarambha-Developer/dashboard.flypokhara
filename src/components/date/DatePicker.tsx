@@ -32,6 +32,7 @@ export default function DatePickerWithPresets({
     <Popover>
       <PopoverTrigger asChild>
         <Button
+          id="date-time"
           variant={"outline"}
           className={cn(
             "w-full justify-start text-left font-normal",
@@ -62,7 +63,12 @@ export default function DatePickerWithPresets({
           </SelectContent>
         </Select>
         <div className="rounded-md border">
-          <Calendar mode="single" selected={date} onSelect={setDate} />
+              
+          <Calendar mode="single" selected={date} onSelect={(value) => {
+            setDate(value);
+            document.getElementById('date-time')?.click();
+            }} />
+        
         </div>
       </PopoverContent>
     </Popover>
