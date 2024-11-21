@@ -15,13 +15,6 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { useRouter, useSearchParams } from "next/navigation";
 import { PaginationWithLinks } from "./ui/pagination-with-links";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
 import requestHelper from "@/utils/request-helper";
 import { getCookie } from "@/lib/cookie-handler";
 import toast from "react-hot-toast";
@@ -80,7 +73,7 @@ export function FlightBookingsTableComponent({
   pilots,
   aircrafts,
 }: {
-  bookings: FlightBooking[];
+  bookings: FlightBooking[]|undefined;
   role: string | undefined;
   meta: meta;
   pilots: {
@@ -225,8 +218,8 @@ export function FlightBookingsTableComponent({
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody>
-          {flightBookings.map((booking, index) => (
+      <TableBody>
+          {flightBookings&&flightBookings.map((booking, index) => (
             // console.log("booking", booking),
             // console.log("role", role),
             <Fragment key={booking.id}>
@@ -342,11 +335,13 @@ export function FlightBookingsTableComponent({
         </TableBody>
       </Table>
 
-      <PaginationWithLinks
+    { bookings? <PaginationWithLinks
         page={meta.page}
         pageSize={perPage}
         totalCount={meta.total}
-      />
+      /> : <div className="flex justify-center items-center h-20 mx-auto ">
+            No Data Found
+      </div>}
     </>
   );
 }
