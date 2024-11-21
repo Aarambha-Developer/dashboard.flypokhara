@@ -78,8 +78,10 @@ export function RegisterForm({ role }: { role: string | undefined }) {
     const result = UserSchema.safeParse(formData);
     if (result.success) {
       await requestHelper.post({
-        endPoint: `${process.env.NEXT_PUBLIC_API_URL}/auth/${role == "ADMIN" ? 'admin-register' : '/register'}`,
-        token:await getCookie('access_token')||"",
+        endPoint: `${process.env.NEXT_PUBLIC_API_URL}/auth/${
+          role == "ADMIN" ? "admin-register" : "register"
+        }`,
+        token: (await getCookie("access_token")) || "",
         data: {
           name: formData.name,
           email: formData.email,
@@ -88,12 +90,14 @@ export function RegisterForm({ role }: { role: string | undefined }) {
           about: formData.about,
           role: formData.role,
         },
-        
+
         success: async (message: string, data: any) => {
           toast.success(message);
           setLoading(false);
           console.log("data", data);
-          !await getCookie('access_token') ? router.push("/login") : router.push('/agencies');
+          !(await getCookie("access_token"))
+            ? router.push("/login")
+            : router.push("/agencies");
           return;
         },
         failure: (error: any) => {
