@@ -20,7 +20,7 @@ const routes = [
   },
   {
     id: 4,
-    href: "/change-password",
+    href: "/settings",
     name: "Settings",
     role: ["AGENCY", "ADMIN", "AIRPORT"],
   },

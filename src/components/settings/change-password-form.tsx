@@ -95,7 +95,7 @@ export function ChangePasswordFormComponent() {
   }
 
   return (
-    <Card className="w-[450px]">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle>Change Password</CardTitle>
         <CardDescription>
@@ -205,7 +205,7 @@ export function ChangePasswordFormComponent() {
             />
             <Button
               type="submit"
-              className="w-full !bg-gray-800"
+              className=" !bg-gray-800"
               disabled={isLoading}
             >
               {isLoading ? "Changing Password..." : "Change Password"}
