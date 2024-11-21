@@ -57,7 +57,7 @@ export default function Login() {
       success: async (message: string, data: any) => {
         await setCookie("access_token", (await data?.data?.access_token) || "");
         await setCookie("role", data?.data?.user?.role);
-        await setCookie("user", data?.data?.user.name);
+        // await setCookie("user", data?.data?.user.name);
         toast.success(message);
         setLoading(false);
         setEmail("");

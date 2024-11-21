@@ -5,6 +5,7 @@ import {
   getCookie,
 } from "@/lib/cookie-handler";
 import routes from "@/Routes/routes";
+import requestHelper from "@/utils/request-helper";
 import { BarChart3, Users, Package, Settings, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -16,38 +17,46 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  type details =
+    | {
+        id: number;
+        name: string;
+        contact: string | undefined;
+        about: string | undefined;
+      }
+    | undefined;
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
-  const [isAdmin, setIsAdmin] = useState<string | undefined>(undefined);
-  const [user, setUser] = useState<string | undefined>(undefined);
+  const [details, setDetails] = useState<details>(undefined);
+
+  // const [isAdmin, setIsAdmin] = useState<string | undefined>(undefined);
+  // const [user, setUser] = useState<string | undefined>(undefined);
   const [role, setRole] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     const fetchRole = async () => {
       const role = await getCookie("role");
-      const user = await getCookie("user");
+      // const user = await getCookie("user");
+      const token = await getCookie("access_token");
+
+      await requestHelper.get({
+        endPoint: `${process.env.NEXT_PUBLIC_API_URL}/auth/profile`,
+        token: token,
+        success: (message: string, data: any) => {
+          setDetails(data.data);
+        },
+        failure: (error: any) => {},
+      });
+
       setRole(role);
-      setIsAdmin(role);
-      setUser(user);
+      // setIsAdmin(role);
+      // setUser(details?.name);
     };
     fetchRole();
   }, []);
 
-  // const filteredRoutes = routes.filter(
-  //   (route) => !route.adminOnly || isAdmin === "ADMIN"
-  // );
-
-  // const roles = ["ADMIN", "AGENCY"];
-
   const router = useRouter();
-
-  // useEffect(() => {
-  //   const isLoggedIn = getCookie("access_token");
-  //   if (!isLoggedIn) {
-  //     router.push("/login");
-  //   }
-  // }, []);
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -85,7 +94,7 @@ export default function AdminLayout({
               {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
             <h2 className="text-xl font-semibold text-gray-800 ml-4">
-              Welcome {user} !
+              Welcome {details?.name} !
             </h2>
           </div>
           <div className="flex items-center">
