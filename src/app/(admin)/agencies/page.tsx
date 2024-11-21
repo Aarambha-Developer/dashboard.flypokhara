@@ -13,7 +13,8 @@ export default async function RegisterAgency() {
         id: number;
         name: string;
         email: string;
-        contact: string;
+      contact: string;
+        role: string;
       }[]
     | undefined;
   await requestHelper.get({
@@ -26,39 +27,103 @@ export default async function RegisterAgency() {
   });
   return (
     <div>
-      {role === "ADMIN" ? (
-        <Card className="my-1 mx-2">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>Agencies</CardTitle>
-            <Link
-              className="bg-primary text-white py-2 px-4 rounded"
-              href="/agencies/register"
-            >
-              Register Agency
-            </Link>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {agencys &&
-                agencys.map((agency) => (
-                  <div key={agency.id} className="flex items-center">
-                    <div className="ml-4 space-y-1">
-                      <p className="text-sm font-medium leading-none">
-                        {agency.name}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {agency.email}
-                      </p>
-                    </div>
-                    <div className="ml-auto font-medium">{agency.contact}</div>
-                  </div>
-                ))}
-            </div>
-          </CardContent>
-        </Card>
+      {role === 'ADMIN' ? (
+        <>
+          <Card className='my-1 mx-2'>
+            <CardHeader className='flex flex-row items-center justify-between'>
+              <CardTitle>Agencies</CardTitle>
+              <Link
+                className='bg-primary text-white py-2 px-4 rounded'
+                href='/agencies/register'>
+                Register Now
+              </Link>
+            </CardHeader>
+            <CardContent>
+              <div className='space-y-4'>
+                {agencys &&
+                  agencys.map(
+                    (agency) =>
+                      agency.role === 'AGENCY' && (
+                        <div key={agency.id} className='flex items-center'>
+                          <div className='ml-4 space-y-1'>
+                            <p className='text-sm font-medium leading-none'>
+                              {agency.name}
+                            </p>
+                            <p className='text-sm text-muted-foreground'>
+                              {agency.email}
+                            </p>
+                          </div>
+                          <div className='ml-auto font-medium'>
+                            {agency.contact}
+                          </div>
+                        </div>
+                      )
+                  )}
+              </div>
+            </CardContent>
+          </Card>
+          <Card className='my-1 mx-2'>
+            <CardHeader className='flex flex-row items-center justify-between'>
+              <CardTitle>Admins</CardTitle>
+              
+            </CardHeader>
+            <CardContent>
+              <div className='space-y-4'>
+                {agencys &&
+                  agencys.map(
+                    (agency) =>
+                      agency.role === 'ADMIN' && (
+                        <div key={agency.id} className='flex items-center'>
+                          <div className='ml-4 space-y-1'>
+                            <p className='text-sm font-medium leading-none'>
+                              {agency.name}
+                            </p>
+                            <p className='text-sm text-muted-foreground'>
+                              {agency.email}
+                            </p>
+                          </div>
+                          <div className='ml-auto font-medium'>
+                            {agency.contact}
+                          </div>
+                        </div>
+                      )
+                  )}
+              </div>
+            </CardContent>
+          </Card>
+          <Card className='my-1 mx-2'>
+            <CardHeader className='flex flex-row items-center justify-between'>
+              <CardTitle>Airport</CardTitle>
+             
+            </CardHeader>
+            <CardContent>
+              <div className='space-y-4'>
+                {agencys &&
+                  agencys.map(
+                    (agency) =>
+                      agency.role === 'AIRPORT' && (
+                        <div key={agency.id} className='flex items-center'>
+                          <div className='ml-4 space-y-1'>
+                            <p className='text-sm font-medium leading-none'>
+                              {agency.name}
+                            </p>
+                            <p className='text-sm text-muted-foreground'>
+                              {agency.email}
+                            </p>
+                          </div>
+                          <div className='ml-auto font-medium'>
+                            {agency.contact}
+                          </div>
+                        </div>
+                      )
+                  )}
+              </div>
+            </CardContent>
+          </Card>
+        </>
       ) : (
         <div>
-          <h2 className="flex justify-center items-center text-lg text-red-500 mt-20 uppercase">
+          <h2 className='flex justify-center items-center text-lg text-red-500 mt-20 uppercase'>
             Unauthorized page
           </h2>
         </div>

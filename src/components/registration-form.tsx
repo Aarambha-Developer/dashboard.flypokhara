@@ -18,6 +18,7 @@ import {
 import requestHelper from "@/utils/request-helper";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { getCookie } from "@/lib/cookie-handler";
 
 const UserSchema = z
   .object({
@@ -77,7 +78,8 @@ export function RegisterForm({ role }: { role: string | undefined }) {
     const result = UserSchema.safeParse(formData);
     if (result.success) {
       await requestHelper.post({
-        endPoint: `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
+        endPoint: `${process.env.NEXT_PUBLIC_API_URL}/auth/${role == "ADMIN" ? 'admin-register' : '/register'}`,
+        token:await getCookie('access_token')||"",
         data: {
           name: formData.name,
           email: formData.email,
@@ -86,10 +88,12 @@ export function RegisterForm({ role }: { role: string | undefined }) {
           about: formData.about,
           role: formData.role,
         },
+        
         success: async (message: string, data: any) => {
           toast.success(message);
           setLoading(false);
-          router.push("/login");
+          console.log("data", data);
+          !await getCookie('access_token') ? router.push("/login") : router.push('/agencies');
           return;
         },
         failure: (error: any) => {
