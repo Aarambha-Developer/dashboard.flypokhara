@@ -31,8 +31,8 @@ import { useRouter } from "next/navigation";
 const formSchema = z.object({
   flightDate: z.date(),
   nationality: z.string({ message: "Country is required" }),
-  prePayment: z.coerce.number({message:"Invalid Prepayment amount"}),
-  discount: z.coerce.number({message:"Invalid Discount amount"}),
+  prePayment: z.coerce.number({ message: "Invalid Prepayment amount" }),
+  discount: z.coerce.number({ message: "Invalid Discount amount" }),
   flightType: z
     .enum(["FREE", "TRAINING", "COMMERCIAL", "TEST"], {
       errorMap: () => ({ message: "Please select a flight type." }),
@@ -362,7 +362,7 @@ export default function BookingForm({
   });
 
   const onSubmit = async (data: BookingFormSchema) => {
-    // console.log(data);
+    console.log("payload", data);
     const access_token = await getCookie("access_token");
     !bookingDetails
       ? await requestHelper.post({
@@ -397,6 +397,7 @@ export default function BookingForm({
         })
       : await requestHelper.patch({
           endPoint: `${process.env.NEXT_PUBLIC_API_URL}/booking/${bookingDetails?.id}`,
+
           data:
             role == "ADMIN"
               ? {
@@ -465,7 +466,10 @@ export default function BookingForm({
                     <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
                       Country <span className="text-red-600 text-lg">*</span>
                     </FormLabel>
-                    <Select onValueChange={field.onChange}>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Please select country" />
@@ -479,7 +483,7 @@ export default function BookingForm({
                           >
                             <SelectItem
                               key={nationality.name}
-                              value={nationality.name}
+                              value={nationality.name.toLowerCase()}
                               //   className="uppercase"
                             >
                               {nationality.name}
@@ -506,7 +510,11 @@ export default function BookingForm({
                       <span className="text-red-600 text-lg">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="Citizenship / Passport" value={field.value||""} onChange={field.onChange} />
+                      <Input
+                        placeholder="Citizenship / Passport"
+                        value={field.value || ""}
+                        onChange={field.onChange}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -570,7 +578,10 @@ export default function BookingForm({
                       Aircraft Type{" "}
                       <span className="text-red-600 text-lg">*</span>
                     </FormLabel>
-                    <Select onValueChange={field.onChange}>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue
@@ -615,19 +626,23 @@ export default function BookingForm({
                       Flight Packages
                       <span className="text-red-600 text-lg">*</span>
                     </FormLabel>
-                    <Select onValueChange={field.onChange}>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value ? field.value.toString() : ""}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue
-                            placeholder={
-                              field.value
-                                ? flightPackages.find(
-                                    (flight: any) => flight.id == field.value
-                                  )?.title
-                                : "Please select flight package"
-                            }
-                          >
-                            {field.value
+                            // placeholder={
+                            //   field.value
+                            //     ? flightPackages.find(
+                            //         (flight: any) => flight.id == field.value
+                            //       )?.title
+                            //     : "Please select flight package"
+                            // }
+                            placeholder={"Please select a flight package"}
+                          />
+                          {/* {field.value
                               ? `${
                                   flightPackages.find(
                                     (flight: any) => flight.id == field.value
@@ -637,8 +652,8 @@ export default function BookingForm({
                                     (flight: any) => flight.id == field.value
                                   )?.duration
                                 } minutes)`
-                              : "Please select flight package"}
-                          </SelectValue>
+                              : "Please select flight package"} */}
+                          {/* </SelectValue> */}
                         </SelectTrigger>
                       </FormControl>
 
@@ -646,7 +661,7 @@ export default function BookingForm({
                         {flightPackages.map((flight: any) => (
                           <SelectItem
                             key={flight.id}
-                            value={flight.id}
+                            value={flight.id.toString()}
                             //   className="uppercase"
                           >
                             {flight.title} &nbsp;
@@ -676,6 +691,7 @@ export default function BookingForm({
                         onValueChange={(value) =>
                           field.onChange(value === "true")
                         }
+                        defaultValue={field.value ? "true" : "false"}
                         className="flex"
                       >
                         <FormItem className="flex items-center space-x-2 space-y-0">
@@ -731,7 +747,10 @@ export default function BookingForm({
                         <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
                           Payment Method{" "}
                         </FormLabel>
-                        <Select onValueChange={field.onChange}>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Please select payment method" />
@@ -770,16 +789,21 @@ export default function BookingForm({
                         <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
                           Pilot
                         </FormLabel>
-                        <Select onValueChange={field.onChange}>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={
+                            field.value ? field.value.toString() : ""
+                          }
+                        >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Please select pilot">
-                                {field.value
+                              <SelectValue placeholder="Please select pilot" />
+                              {/* {field.value
                                   ? pilots.find(
                                       (pilot: any) => pilot.id == field.value
                                     )?.name
-                                  : "Please select pilot"}
-                              </SelectValue>
+                                  : "Please select pilot"} */}
+                              {/* </SelectValue> */}
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -787,7 +811,7 @@ export default function BookingForm({
                               <div className="flex items-center" key={pilot.id}>
                                 <SelectItem
                                   key={pilot.id}
-                                  value={pilot.id}
+                                  value={pilot.id.toString()}
                                   //   className="uppercase"
                                 >
                                   {pilot.name}
@@ -846,7 +870,10 @@ export default function BookingForm({
                         <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
                           Flight Type
                         </FormLabel>
-                        <Select onValueChange={field.onChange}>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value || ""}
+                        >
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Please select flight type" />
