@@ -363,8 +363,13 @@ export default function BookingForm({
   });
 
   const onSubmit = async (data: BookingFormSchema) => {
-    console.log("payload", data);
+ 
     const access_token = await getCookie("access_token");
+    if (data?.paymentMethod) {
+      console.log("its payment");
+    } else {
+      console.log("its not payment");
+    }
     !bookingDetails
       ? await requestHelper.post({
           endPoint: `${process.env.NEXT_PUBLIC_API_URL}/booking`,
@@ -374,7 +379,8 @@ export default function BookingForm({
                   ...data,
                   pilotId: form.getValues("pilotId")
                     ? Number(form.getValues("pilotId"))
-                    : undefined,
+                  : undefined,
+                  paymentMethod:data?.paymentMethod?.trim()!=""?data?.paymentMethod:undefined
                 }
               : {
                   pName: form.getValues("pName"),
@@ -384,7 +390,7 @@ export default function BookingForm({
                   flightDate: form.getValues("flightDate"),
                   packageId: Number(form.getValues("packageId")),
                   includes: form.getValues("includes"),
-                aircraftType: form.getValues("aircraftType"),
+                  aircraftType: form.getValues("aircraftType"),
                   description: form.getValues("description"),
                 },
           token: access_token,
@@ -406,7 +412,8 @@ export default function BookingForm({
                   ...data,
                   pilotId: form.getValues("pilotId")
                     ? Number(form.getValues("pilotId"))
-                    : undefined,
+                  : undefined,
+                  paymentMethod:data?.paymentMethod?.trim()!=""?data?.paymentMethod:undefined
                 }
               : {
                   pName: form.getValues("pName"),
@@ -415,9 +422,8 @@ export default function BookingForm({
                   pIdType: form.getValues("pIdType"),
                   flightDate: form.getValues("flightDate"),
                   packageId: Number(form.getValues("packageId")),
-                  paymentMethod: form.getValues("paymentMethod") || undefined,
                   includes: form.getValues("includes"),
-                aircraftType: form.getValues("aircraftType"),
+                  aircraftType: form.getValues("aircraftType"),
                   description: form.getValues("description"),
                 },
           token: access_token,
@@ -918,8 +924,8 @@ export default function BookingForm({
                     Note
                   </FormLabel>
                   <FormControl>
-                    <Textarea rows={4} placeholder='Description' onChange={field.onChange}>
-                      {field.value}
+                    <Textarea rows={4} value={field.value||""} placeholder='Description' onChange={field.onChange}>
+                    
                     </Textarea>
                   </FormControl>
                   <FormMessage className='font-normal' />

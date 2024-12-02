@@ -24,7 +24,7 @@ const EditBooking = async ({ params }: { params: Promise<{ id: string }> }) => {
     nationality: '',
     discount: 0,
     prePayment: 0,
-    paymentMethod: '',
+    paymentMethod: undefined,
     pName: '',
     pId: '',
     pIdType: '',
