@@ -20,6 +20,7 @@ const EditBooking = async ({ params }: { params: Promise<{ id: string }> }) => {
   let bookingDetails: BookingFormSchema & { id: number | undefined } = {
     pilotId: 0,
     packageId: 0,
+    description: '',
     nationality: '',
     discount: 0,
     prePayment: 0,
@@ -56,6 +57,7 @@ const EditBooking = async ({ params }: { params: Promise<{ id: string }> }) => {
     token: token,
     success: (message: string, data: any) => {
       bookingDetails = {
+        description: data.data.description || '',
         id: data.data.id || undefined,
         pilotId: data.data.pilotId || undefined,
         packageId: data.data.packageId || undefined,
