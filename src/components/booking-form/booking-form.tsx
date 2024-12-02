@@ -27,6 +27,7 @@ import requestHelper from "@/utils/request-helper";
 import toast from "react-hot-toast";
 import { getCookie } from "@/lib/cookie-handler";
 import { useRouter } from "next/navigation";
+import { Textarea } from "../ui/textarea";
 
 const formSchema = z.object({
   flightDate: z.date(),
@@ -39,7 +40,7 @@ const formSchema = z.object({
     })
     .nullable(),
   paymentMethod: z.any(),
-
+   description: z.string({ message: "Description is required" }).nullable(),
   packageId: z.coerce.number({ message: "Flight Package is required" }),
   pilotId: z.any(),
   includes: z.boolean(),
@@ -383,7 +384,8 @@ export default function BookingForm({
                   flightDate: form.getValues("flightDate"),
                   packageId: Number(form.getValues("packageId")),
                   includes: form.getValues("includes"),
-                  aircraftType: form.getValues("aircraftType"),
+                aircraftType: form.getValues("aircraftType"),
+                  description: form.getValues("description"),
                 },
           token: access_token,
           success: (message: string, data: any) => {
@@ -415,7 +417,8 @@ export default function BookingForm({
                   packageId: Number(form.getValues("packageId")),
                   paymentMethod: form.getValues("paymentMethod") || undefined,
                   includes: form.getValues("includes"),
-                  aircraftType: form.getValues("aircraftType"),
+                aircraftType: form.getValues("aircraftType"),
+                  description: form.getValues("description"),
                 },
           token: access_token,
           success: (message: string, data: any) => {
@@ -431,27 +434,26 @@ export default function BookingForm({
 
   return (
     <>
-      <div className="max-w-6xl mx-auto bg-white rounded-lg pt-4  mt-4 ">
-        <div className="flex justify-center">
-          <h2 className="font-medium text-2xl text-gray-800">Booking Form</h2>
+      <div className='max-w-6xl mx-auto bg-white rounded-lg pt-4  mt-4 '>
+        <div className='flex justify-center'>
+          <h2 className='font-medium text-2xl text-gray-800'>Booking Form</h2>
         </div>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className=" px-8 py-4  rounded-lg w-[100%] "
-          >
+            className=' px-8 py-4  rounded-lg w-[100%] '>
             {/* name and nationality */}
-            <div className="grid gap-4 pb-4 md:grid-cols-2">
+            <div className='grid gap-4 pb-4 md:grid-cols-2'>
               <FormField
                 control={form.control}
-                name="pName"
+                name='pName'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
-                      Full Name <span className="text-red-600 text-lg">*</span>
+                    <FormLabel className='text-blue-700/80 font-semibold max-md:hidden'>
+                      Full Name <span className='text-red-600 text-lg'>*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="Passenger Full Name" {...field} />
+                      <Input placeholder='Passenger Full Name' {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -460,27 +462,25 @@ export default function BookingForm({
 
               <FormField
                 control={form.control}
-                name="nationality"
+                name='nationality'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
-                      Country <span className="text-red-600 text-lg">*</span>
+                    <FormLabel className='text-blue-700/80 font-semibold max-md:hidden'>
+                      Country <span className='text-red-600 text-lg'>*</span>
                     </FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
+                      defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Please select country" />
+                          <SelectValue placeholder='Please select country' />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
                         {nationalities.map((nationality) => (
                           <div
-                            className="flex items-center"
-                            key={nationality.name}
-                          >
+                            className='flex items-center'
+                            key={nationality.name}>
                             <SelectItem
                               key={nationality.name}
                               value={nationality.name.toLowerCase()}
@@ -492,27 +492,27 @@ export default function BookingForm({
                         ))}
                       </SelectContent>
                     </Select>
-                    <FormMessage className="font-normal" />
+                    <FormMessage className='font-normal' />
                   </FormItem>
                 )}
               />
             </div>
 
             {/* identidication type and number */}
-            <div className="grid gap-4 pb-4 md:grid-cols-2">
+            <div className='grid gap-4 pb-4 md:grid-cols-2'>
               <FormField
                 control={form.control}
-                name="pIdType"
+                name='pIdType'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
-                      Identification Type{" "}
-                      <span className="text-red-600 text-lg">*</span>
+                    <FormLabel className='text-blue-700/80 font-semibold max-md:hidden'>
+                      Identification Type{' '}
+                      <span className='text-red-600 text-lg'>*</span>
                     </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Citizenship / Passport"
-                        value={field.value || ""}
+                        placeholder='Citizenship / Passport'
+                        value={field.value || ''}
                         onChange={field.onChange}
                       />
                     </FormControl>
@@ -523,36 +523,36 @@ export default function BookingForm({
 
               <FormField
                 control={form.control}
-                name="pId"
+                name='pId'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
+                    <FormLabel className='text-blue-700/80 font-semibold max-md:hidden'>
                       Identification Number
-                      <span className="text-red-600 text-lg">*</span>
+                      <span className='text-red-600 text-lg'>*</span>
                     </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Citizenship ID / Passport ID"
-                        value={field.value || ""}
+                        placeholder='Citizenship ID / Passport ID'
+                        value={field.value || ''}
                         onChange={field.onChange}
                       />
                     </FormControl>
-                    <FormMessage className="font-normal" />
+                    <FormMessage className='font-normal' />
                   </FormItem>
                 )}
               />
             </div>
 
             {/* flight date and aircraft type */}
-            <div className="grid gap-4 pb-4 md:grid-cols-2">
+            <div className='grid gap-4 pb-4 md:grid-cols-2'>
               <FormField
                 control={form.control}
-                name="flightDate"
+                name='flightDate'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
-                      Flight Date{" "}
-                      <span className="text-red-600 text-lg">*</span>
+                    <FormLabel className='text-blue-700/80 font-semibold max-md:hidden'>
+                      Flight Date{' '}
+                      <span className='text-red-600 text-lg'>*</span>
                     </FormLabel>
                     <FormControl>
                       <DatePickerWithPresets
@@ -571,17 +571,16 @@ export default function BookingForm({
 
               <FormField
                 control={form.control}
-                name="aircraftType"
+                name='aircraftType'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
-                      Aircraft Type{" "}
-                      <span className="text-red-600 text-lg">*</span>
+                    <FormLabel className='text-blue-700/80 font-semibold max-md:hidden'>
+                      Aircraft Type{' '}
+                      <span className='text-red-600 text-lg'>*</span>
                     </FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
+                      defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue
@@ -589,7 +588,7 @@ export default function BookingForm({
                             placeholder={
                               field.value
                                 ? field.value
-                                : "Please select aircraft type"
+                                : 'Please select aircraft type'
                             }
                           />
                         </SelectTrigger>
@@ -597,9 +596,8 @@ export default function BookingForm({
                       <SelectContent>
                         {aircraftType.map((aircraft) => (
                           <div
-                            className="flex items-center"
-                            key={aircraft.value}
-                          >
+                            className='flex items-center'
+                            key={aircraft.value}>
                             <SelectItem
                               key={aircraft.value}
                               value={aircraft.value}
@@ -611,25 +609,24 @@ export default function BookingForm({
                         ))}
                       </SelectContent>
                     </Select>
-                    <FormMessage className="font-normal" />
+                    <FormMessage className='font-normal' />
                   </FormItem>
                 )}
               />
             </div>
-            <div className="grid gap-4 pb-4 md:grid-cols-2">
+            <div className='grid gap-4 pb-4 md:grid-cols-2'>
               <FormField
                 control={form.control}
-                name="packageId"
+                name='packageId'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
+                    <FormLabel className='text-blue-700/80 font-semibold max-md:hidden'>
                       Flight Packages
-                      <span className="text-red-600 text-lg">*</span>
+                      <span className='text-red-600 text-lg'>*</span>
                     </FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value ? field.value.toString() : ""}
-                    >
+                      defaultValue={field.value ? field.value.toString() : ''}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue
@@ -640,7 +637,7 @@ export default function BookingForm({
                             //       )?.title
                             //     : "Please select flight package"
                             // }
-                            placeholder={"Please select a flight package"}
+                            placeholder={'Please select a flight package'}
                           />
                           {/* {field.value
                               ? `${
@@ -665,46 +662,45 @@ export default function BookingForm({
                             //   className="uppercase"
                           >
                             {flight.title} &nbsp;
-                            <span className="font-[600]">
-                              {" "}
+                            <span className='font-[600]'>
+                              {' '}
                               ({flight.duration} minutes)
                             </span>
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                    <FormMessage className="font-normal" />
+                    <FormMessage className='font-normal' />
                   </FormItem>
                 )}
               />
               <FormField
                 control={form.control}
-                name="includes"
+                name='includes'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
-                      Want Photos / Videos?{" "}
-                      <span className="text-red-600 text-lg">*</span>
+                    <FormLabel className='text-blue-700/80 font-semibold max-md:hidden'>
+                      Want Photos / Videos?{' '}
+                      <span className='text-red-600 text-lg'>*</span>
                     </FormLabel>
                     <FormControl>
                       <RadioGroup
                         onValueChange={(value) =>
-                          field.onChange(value === "true")
+                          field.onChange(value === 'true')
                         }
-                        defaultValue={field.value ? "true" : "false"}
-                        className="flex"
-                      >
-                        <FormItem className="flex items-center space-x-2 space-y-0">
+                        defaultValue={field.value ? 'true' : 'false'}
+                        className='flex'>
+                        <FormItem className='flex items-center space-x-2 space-y-0'>
                           <FormControl>
-                            <RadioGroupItem value="true" />
+                            <RadioGroupItem value='true' />
                           </FormControl>
-                          <FormLabel className="font-normal">Yes</FormLabel>
+                          <FormLabel className='font-normal'>Yes</FormLabel>
                         </FormItem>
-                        <FormItem className="flex items-center space-x-2 space-y-0">
+                        <FormItem className='flex items-center space-x-2 space-y-0'>
                           <FormControl>
-                            <RadioGroupItem value="false" />
+                            <RadioGroupItem value='false' />
                           </FormControl>
-                          <FormLabel className="font-normal">No</FormLabel>
+                          <FormLabel className='font-normal'>No</FormLabel>
                         </FormItem>
                       </RadioGroup>
                     </FormControl>
@@ -716,23 +712,23 @@ export default function BookingForm({
 
             {/* only for admin */}
             {/* prepayment and payment type */}
-            {role === "ADMIN" && (
+            {role === 'ADMIN' && (
               <div>
-                <div className="grid gap-4 pb-4 md:grid-cols-2">
+                <div className='grid gap-4 pb-4 md:grid-cols-2'>
                   <FormField
                     control={form.control}
-                    name="prePayment"
+                    name='prePayment'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
+                        <FormLabel className='text-blue-700/80 font-semibold max-md:hidden'>
                           Pre Payment &nbsp;
-                          {form.getValues("nationality") === "Nepal" ||
-                          form.getValues("nationality") === "India"
-                            ? "(Rs.)"
-                            : "(USD)"}
+                          {form.getValues('nationality') === 'Nepal' ||
+                          form.getValues('nationality') === 'India'
+                            ? '(Rs.)'
+                            : '(USD)'}
                         </FormLabel>
                         <FormControl>
-                          <Input placeholder="Pre Payment" {...field} />
+                          <Input placeholder='Pre Payment' {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -741,27 +737,25 @@ export default function BookingForm({
 
                   <FormField
                     control={form.control}
-                    name="paymentMethod"
+                    name='paymentMethod'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
-                          Payment Method{" "}
+                        <FormLabel className='text-blue-700/80 font-semibold max-md:hidden'>
+                          Payment Method{' '}
                         </FormLabel>
                         <Select
                           onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
+                          defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Please select payment method" />
+                              <SelectValue placeholder='Please select payment method' />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
                             {paymentType.map((payment) => (
                               <div
-                                className="flex items-center"
-                                key={payment.value}
-                              >
+                                className='flex items-center'
+                                key={payment.value}>
                                 <SelectItem
                                   key={payment.value}
                                   value={payment.value}
@@ -773,31 +767,30 @@ export default function BookingForm({
                             ))}
                           </SelectContent>
                         </Select>
-                        <FormMessage className="font-normal" />
+                        <FormMessage className='font-normal' />
                       </FormItem>
                     )}
                   />
                 </div>
 
                 {/* pilot and ticket no */}
-                <div className="grid gap-4 pb-4 md:grid-cols-2">
+                <div className='grid gap-4 pb-4 md:grid-cols-2'>
                   <FormField
                     control={form.control}
-                    name="pilotId"
+                    name='pilotId'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
+                        <FormLabel className='text-blue-700/80 font-semibold max-md:hidden'>
                           Pilot
                         </FormLabel>
                         <Select
                           onValueChange={field.onChange}
                           defaultValue={
-                            field.value ? field.value.toString() : ""
-                          }
-                        >
+                            field.value ? field.value.toString() : ''
+                          }>
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Please select pilot" />
+                              <SelectValue placeholder='Please select pilot' />
                               {/* {field.value
                                   ? pilots.find(
                                       (pilot: any) => pilot.id == field.value
@@ -808,7 +801,7 @@ export default function BookingForm({
                           </FormControl>
                           <SelectContent>
                             {pilots.map((pilot: any) => (
-                              <div className="flex items-center" key={pilot.id}>
+                              <div className='flex items-center' key={pilot.id}>
                                 <SelectItem
                                   key={pilot.id}
                                   value={pilot.id.toString()}
@@ -820,43 +813,43 @@ export default function BookingForm({
                             ))}
                           </SelectContent>
                         </Select>
-                        <FormMessage className="font-normal" />
+                        <FormMessage className='font-normal' />
                       </FormItem>
                     )}
                   />
 
                   <FormField
                     control={form.control}
-                    name="ticketNo"
+                    name='ticketNo'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
-                          Ticket No{" "}
+                        <FormLabel className='text-blue-700/80 font-semibold max-md:hidden'>
+                          Ticket No{' '}
                         </FormLabel>
                         <FormControl>
-                          <Input placeholder="Ticket No" {...field} />
+                          <Input placeholder='Ticket No' {...field} />
                         </FormControl>
-                        <FormMessage className="font-normal" />
+                        <FormMessage className='font-normal' />
                       </FormItem>
                     )}
                   />
                 </div>
                 {/* discount and commision */}
-                <div className="grid gap-4 pb-4 md:grid-cols-2">
+                <div className='grid gap-4 pb-4 md:grid-cols-2'>
                   <FormField
                     control={form.control}
-                    name="discount"
+                    name='discount'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
+                        <FormLabel className='text-blue-700/80 font-semibold max-md:hidden'>
                           Discount &nbsp;
-                          {form.getValues("nationality") === "Nepal" ||
-                          form.getValues("nationality") === "India"
-                            ? "(Rs.)"
-                            : "(USD)"}
+                          {form.getValues('nationality') === 'Nepal' ||
+                          form.getValues('nationality') === 'India'
+                            ? '(Rs.)'
+                            : '(USD)'}
                         </FormLabel>
                         <FormControl>
-                          <Input placeholder="Discount" {...field} />
+                          <Input placeholder='Discount' {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -864,27 +857,25 @@ export default function BookingForm({
                   />
                   <FormField
                     control={form.control}
-                    name="flightType"
+                    name='flightType'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-blue-700/80 font-semibold max-md:hidden">
+                        <FormLabel className='text-blue-700/80 font-semibold max-md:hidden'>
                           Flight Type
                         </FormLabel>
                         <Select
                           onValueChange={field.onChange}
-                          defaultValue={field.value || ""}
-                        >
+                          defaultValue={field.value || ''}>
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Please select flight type" />
+                              <SelectValue placeholder='Please select flight type' />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
                             {flightType.map((flight) => (
                               <div
-                                className="flex items-center"
-                                key={flight.value}
-                              >
+                                className='flex items-center'
+                                key={flight.value}>
                                 <SelectItem
                                   key={flight.value}
                                   value={flight.value}
@@ -896,7 +887,7 @@ export default function BookingForm({
                             ))}
                           </SelectContent>
                         </Select>
-                        <FormMessage className="font-normal" />
+                        <FormMessage className='font-normal' />
                       </FormItem>
                     )}
                   />
@@ -918,10 +909,27 @@ export default function BookingForm({
                 </div>
               </div>
             )}
+            <FormField
+              control={form.control}
+              name='description'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className='text-blue-700/80 font-semibold max-md:hidden'>
+                    Note
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea rows={4} placeholder='Description' onChange={field.onChange}>
+                      {field.value}
+                    </Textarea>
+                  </FormControl>
+                  <FormMessage className='font-normal' />
+                </FormItem>
+              )}
+            />
 
-            <div className="flex justify-center mx-auto items-center  my-2">
-              <Button className="bg-blue-500 lg:text-base px-14 py-2 transition-all duration-300 hover:scale-105 hover:bg-blue-600">
-                {" "}
+            <div className='flex justify-center mx-auto items-center  my-2'>
+              <Button className='bg-blue-500 lg:text-base px-14 py-2 transition-all duration-300 hover:scale-105 hover:bg-blue-600'>
+                {' '}
                 Submit &nbsp; {isSubmitting && <Loading />}
               </Button>
             </div>
